@@ -1,0 +1,30 @@
+{
+  "name": "reloj-eventos",
+  "version": "1.0.0",
+  "description": "Reloj de escritorio con cuenta regresiva para proyectos y trámites de varios pasos (licitaciones, cumpleaños, plazos).",
+  "main": "electron/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux"
+  },
+  "keywords": ["reloj", "cuenta regresiva", "countdown", "plazos", "licitaciones", "electron"],
+  "author": "Rodrigo Inostroza",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "cl.rodrigoinostroza.relojeventos",
+    "productName": "Reloj de Eventos",
+    "files": ["electron/**/*", "src/**/*", "package.json"],
+    "win": { "target": ["nsis", "portable"] },
+    "mac": { "target": ["dmg"], "category": "public.app-category.productivity" },
+    "linux": { "target": ["AppImage"], "category": "Utility" }
+  }
+}

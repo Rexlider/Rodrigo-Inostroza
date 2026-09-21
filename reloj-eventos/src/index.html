@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reloj de Eventos</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="barra">
+  <div class="marca">
+    <span class="logo" aria-hidden="true">⏳</span>
+    <div>
+      <h1>Reloj de Eventos</h1>
+      <p>Cuenta regresiva para tus proyectos, trámites y fechas importantes</p>
+    </div>
+  </div>
+
+  <div class="reloj-actual" title="Hora local de tu computador">
+    <strong id="horaActual">--:--:--</strong>
+    <small id="fechaActual">&nbsp;</small>
+  </div>
+
+  <div class="acciones">
+    <button id="btnNuevo" class="btn primario">+ Nuevo proyecto</button>
+    <button id="btnPlantilla" class="btn">Plantillas</button>
+    <button id="btnAlertas" class="btn icono" title="Activar avisos de escritorio" aria-label="Activar avisos de escritorio"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><line class="tachado" x1="4" y1="20" x2="20" y2="4"/></svg></button>
+    <button id="btnTema" class="btn icono" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"/></svg></button>
+    <div class="menu-envoltorio">
+      <button id="btnMas" class="btn icono" title="Más opciones" aria-label="Más opciones" aria-haspopup="true" aria-expanded="false">⋯</button>
+      <div class="menu" id="menuMas" hidden>
+        <button data-accion="exportar">Exportar respaldo (.json)</button>
+        <button data-accion="importar">Importar respaldo…</button>
+        <button data-accion="ejemplo">Cargar datos de ejemplo</button>
+        <button data-accion="borrar" class="peligro">Borrar todo</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="destacado" id="destacado" hidden>
+  <div class="destacado-info">
+    <span class="etiqueta">Próximo vencimiento</span>
+    <h2 id="destacadoHito">—</h2>
+    <p id="destacadoProyecto">—</p>
+    <p class="destacado-fecha" id="destacadoFecha">—</p>
+  </div>
+  <div class="destacado-reloj">
+    <div class="cuenta-grande" id="destacadoCuenta">--:--:--</div>
+    <div class="cuenta-horas" id="destacadoHoras">— h</div>
+    <div class="cuenta-frase" id="destacadoFrase">—</div>
+    <div class="barra-tramo"><span id="destacadoBarra" style="width:0%"></span></div>
+  </div>
+</section>
+
+<section class="resumen" id="resumen" hidden>
+  <div class="pastilla"><strong id="statProyectos">0</strong><span>proyectos</span></div>
+  <div class="pastilla"><strong id="statPendientes">0</strong><span>pasos pendientes</span></div>
+  <div class="pastilla critico"><strong id="statCriticos">0</strong><span>en las próximas 24 h</span></div>
+  <div class="pastilla vencido"><strong id="statVencidos">0</strong><span>vencidos</span></div>
+</section>
+
+<section class="controles">
+  <input id="busqueda" type="search" placeholder="Buscar proyecto o paso…" aria-label="Buscar">
+  <div class="filtros" id="filtros">
+    <button class="chip activo" data-filtro="todos">Todos</button>
+    <button class="chip" data-filtro="activos">Activos</button>
+    <button class="chip" data-filtro="urgentes">Urgentes</button>
+    <button class="chip" data-filtro="vencidos">Vencidos</button>
+    <button class="chip" data-filtro="completados">Completados</button>
+  </div>
+</section>
+
+<main id="lista" class="lista"></main>
+
+<div id="vacio" class="vacio" hidden>
+  <span class="logo-grande" aria-hidden="true">🗓️</span>
+  <h2>Todavía no hay nada que contar</h2>
+  <p>Crea tu primer proyecto con todos sus pasos, o parte desde una plantilla<br>como la de <strong>Licitación Mercado Público</strong>.</p>
+  <div class="vacio-botones">
+    <button class="btn primario" data-accion="nuevo">+ Nuevo proyecto</button>
+    <button class="btn" data-accion="plantillas">Ver plantillas</button>
+    <button class="btn sutil" data-accion="ejemplo">Cargar ejemplo</button>
+  </div>
+</div>
+
+<footer class="pie">
+  <span>Los datos se guardan solo en este computador. Usa <em>Exportar respaldo</em> para llevártelos.</span>
+  <span id="pieVersion"></span>
+</footer>
+
+<!-- Editor de proyecto -->
+<dialog id="modalProyecto" class="modal">
+  <form method="dialog" id="formProyecto">
+    <header class="modal-cabecera">
+      <h2 id="modalTitulo">Nuevo proyecto</h2>
+      <button type="button" class="btn icono" data-cerrar aria-label="Cerrar">✕</button>
+    </header>
+
+    <div class="modal-cuerpo">
+      <label class="campo">
+        <span>Nombre del proyecto o evento *</span>
+        <input id="campoNombre" type="text" maxlength="120" required placeholder="Ej: Licitación 1234-56-LE26 — Municipalidad de…">
+      </label>
+
+      <label class="campo">
+        <span>Descripción</span>
+        <textarea id="campoDescripcion" rows="2" maxlength="600" placeholder="Contexto, número de ID, monto, link al portal…"></textarea>
+      </label>
+
+      <div class="campo">
+        <span>Color</span>
+        <div class="colores" id="campoColores"></div>
+      </div>
+
+      <div class="campo">
+        <div class="cabecera-pasos">
+          <span>Pasos / fechas (puedes agregar todos los que necesites) *</span>
+          <button type="button" class="btn sutil" id="btnAgregarPaso">+ Agregar paso</button>
+        </div>
+        <div id="listaPasos" class="lista-pasos"></div>
+      </div>
+
+      <p class="error" id="errorForm" hidden></p>
+    </div>
+
+    <footer class="modal-pie">
+      <button type="button" class="btn sutil" data-cerrar>Cancelar</button>
+      <button type="submit" class="btn primario" id="btnGuardar">Guardar proyecto</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- Plantillas -->
+<dialog id="modalPlantilla" class="modal">
+  <header class="modal-cabecera">
+    <h2>Empezar desde una plantilla</h2>
+    <button type="button" class="btn icono" data-cerrar aria-label="Cerrar">✕</button>
+  </header>
+  <div class="modal-cuerpo">
+    <label class="campo">
+      <span>Fecha y hora de inicio (el primer paso)</span>
+      <input id="campoFechaBase" type="datetime-local">
+    </label>
+    <p class="ayuda">Los demás pasos se colocan automáticamente después de esa fecha. Luego puedes ajustar cada uno.</p>
+    <div id="listaPlantillas" class="lista-plantillas"></div>
+  </div>
+</dialog>
+
+<input type="file" id="archivoImportar" accept="application/json,.json" hidden>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
