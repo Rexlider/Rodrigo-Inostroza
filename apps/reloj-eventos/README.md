@@ -22,7 +22,8 @@ apertura → adjudicación. También sirve para un cumpleaños, un trámite o la
 - **Avisos de escritorio** 24 h antes, 1 h antes y al vencer cada paso (botón de la campana).
 - **Buscador y filtros** (activos, urgentes, vencidos, completados), duplicar proyectos, tema claro/oscuro.
 - **Respaldo**: exporta todo a un archivo `.json` y vuelve a importarlo en otro computador.
-- Funciona **sin internet**. Los datos se guardan solo en tu computador.
+- **Tus datos son archivos tuyos**: cada proyecto queda en un `.json` legible dentro de `datos/proyectos/`.
+- Funciona **sin internet**. Nada se sube a ninguna parte.
 
 ## Cómo usarla
 
@@ -35,7 +36,7 @@ Abre `src/index.html` con doble clic. Se ve y funciona igual, dentro del navegad
 Necesitas [Node.js](https://nodejs.org) instalado.
 
 ```bash
-cd reloj-eventos
+cd apps/reloj-eventos
 npm install
 npm start
 ```
@@ -69,32 +70,60 @@ pasos típicos y después ajustas las fechas reales de las bases.
 |---|---|
 | `Ctrl/Cmd + N` | Nuevo proyecto |
 | `Ctrl/Cmd + E` | Exportar respaldo |
+| Menú *Archivo* | Abrir carpeta de datos |
 | `Esc` | Cerrar la ventana abierta |
 
 ## Dónde quedan los datos
 
-En el almacenamiento local de la aplicación (`localStorage`), en tu propio computador. No hay servidor,
-no hay cuenta y nada se sube a internet. Si vas a formatear o cambiarte de equipo, usa
-**⋯ → Exportar respaldo** y luego **Importar respaldo** en el otro computador.
+En una carpeta `datos/` dentro de la misma carpeta de la aplicación, como archivos de texto que puedes
+ver, copiar y respaldar a mano:
+
+```
+datos/
+├── proyectos/
+│   ├── licitacion-1234-56-le26__proy_abc123.json     un archivo por proyecto
+│   └── cumpleanos-de-mama__proy_def456.json
+├── preferencias.json                                 tema, filtro y avisos
+└── LEEME.txt
+```
+
+La ruta exacta aparece siempre abajo en la aplicación, con un botón **Abrir carpeta**
+(o desde el menú *Archivo → Abrir carpeta de datos*).
+
+- **Para respaldar o cambiarte de computador**: copia la carpeta `datos/` completa, o usa
+  **⋯ → Exportar respaldo** y después **Importar respaldo** en el otro equipo.
+- **Si editas un archivo a mano** y queda mal escrito, la aplicación lo ignora y **no lo borra**,
+  para que puedas corregirlo sin perder nada.
+- Si instalas la app en una ruta protegida (por ejemplo *Archivos de programa*), donde Windows no deja
+  escribir, los datos se guardan automáticamente en la carpeta de usuario y la ruta real igual se
+  muestra abajo en la ventana.
+- Abriendo `src/index.html` directo en el navegador (opción 1) no hay acceso a archivos, así que ahí se
+  usa el almacenamiento del navegador. La primera vez que abras la app de escritorio, esos proyectos se
+  trasladan solos a la carpeta `datos/`.
+
+Estos archivos no se suben al repositorio: `.gitignore` los deja fuera.
 
 ## Estructura del código
 
 ```
-reloj-eventos/
+apps/reloj-eventos/
 ├── src/
-│   ├── index.html      estructura de la interfaz
-│   ├── styles.css      estilos (tema oscuro y claro)
-│   ├── core.js         lógica pura: cuentas regresivas, estados, plantillas, avisos
-│   └── app.js          interfaz: dibujado, formulario, respaldo, eventos
+│   ├── index.html         estructura de la interfaz
+│   ├── styles.css         estilos (tema oscuro y claro)
+│   ├── core.js            lógica pura: cuentas regresivas, estados, plantillas, avisos
+│   └── app.js             interfaz: dibujado, formulario, respaldo, eventos
 ├── electron/
-│   ├── main.js         ventana de escritorio, menú en español
-│   └── preload.js      puente mínimo y seguro con la interfaz
+│   ├── main.js            ventana de escritorio, menú en español, carpeta de datos
+│   ├── almacen.js         guardado en archivos (un .json por proyecto)
+│   └── preload.js         puente mínimo y seguro con la interfaz
 ├── test/
-│   └── core.test.js    pruebas de la lógica
+│   ├── core.test.js       pruebas de la lógica de fechas
+│   └── almacen.test.js    pruebas del guardado en archivos
+├── datos/                 tus proyectos (se crea al usar la app, fuera del repositorio)
 └── docs/captura.png
 ```
 
-`core.js` no toca el DOM: toda la matemática de fechas está ahí y se puede probar sola.
+`core.js` no toca el DOM y `almacen.js` no depende de Electron: ambos se prueban solos.
 
 ## Pruebas
 
@@ -102,8 +131,10 @@ reloj-eventos/
 npm test
 ```
 
-23 pruebas sobre la lógica de fechas: formato de cuenta regresiva y de horas, estados según lo que falta,
-orden de los pasos, resumen y avance de cada proyecto, escalones de aviso, plantillas y respaldos.
+34 pruebas. Sobre la lógica de fechas: formato de cuenta regresiva y de horas, estados según lo que falta,
+orden de los pasos, resumen y avance de cada proyecto, escalones de aviso, plantillas y respaldos. Sobre el
+guardado en archivos: crear la carpeta, un archivo por proyecto, renombrar sin duplicar, eliminar,
+preferencias aparte y no tocar archivos dañados.
 
 ## Licencia
 

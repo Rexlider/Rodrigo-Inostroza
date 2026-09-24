@@ -10,6 +10,9 @@
   var CLAVE_PREFS = 'reloj-eventos:prefs:v1';
   var CLAVE_AVISOS = 'reloj-eventos:avisos:v1';
 
+  // En la app de escritorio los datos son archivos en una carpeta; en el navegador, localStorage.
+  var ARCHIVOS = (window.relojEscritorio && window.relojEscritorio.almacen) || null;
+
   var $ = function (sel, raiz) { return (raiz || document).querySelector(sel); };
   var $$ = function (sel, raiz) { return Array.prototype.slice.call((raiz || document).querySelectorAll(sel)); };
 
@@ -41,23 +44,63 @@
     }
   }
 
+  function aplicarPrefs(p) {
+    if (!p || typeof p !== 'object') return;
+    prefs.filtro = p.filtro || 'todos';
+    prefs.tema = p.tema === 'claro' ? 'claro' : 'oscuro';
+    prefs.alertas = !!p.alertas;
+    prefs.abiertos = Array.isArray(p.abiertos) ? p.abiertos : [];
+  }
+
   function cargarTodo() {
-    proyectos = C.normalizarDatos(leerJSON(CLAVE_DATOS, { proyectos: [] }));
-    var p = leerJSON(CLAVE_PREFS, null);
-    if (p && typeof p === 'object') {
-      prefs.filtro = p.filtro || 'todos';
-      prefs.tema = p.tema === 'claro' ? 'claro' : 'oscuro';
-      prefs.alertas = !!p.alertas;
-      prefs.abiertos = Array.isArray(p.abiertos) ? p.abiertos : [];
-    }
+    // Qué avisos ya se mostraron es información de este equipo: siempre local.
     avisosMostrados = leerJSON(CLAVE_AVISOS, {}) || {};
+
+    if (!ARCHIVOS) {
+      proyectos = C.normalizarDatos(leerJSON(CLAVE_DATOS, { proyectos: [] }));
+      aplicarPrefs(leerJSON(CLAVE_PREFS, null));
+      return Promise.resolve();
+    }
+
+    return Promise.all([ARCHIVOS.listar(), ARCHIVOS.leerPrefs()])
+      .then(function (resultado) {
+        proyectos = C.normalizarDatos(resultado[0]);
+        aplicarPrefs(resultado[1] || leerJSON(CLAVE_PREFS, null));
+        return trasladarDesdeNavegador();
+      })
+      .catch(function (e) {
+        console.error(e);
+        avisar('No se pudo leer la carpeta de datos', String((e && e.message) || e), 'vencido');
+      });
+  }
+
+  /** La primera vez que se abre la app de escritorio, rescata lo guardado en el navegador. */
+  function trasladarDesdeNavegador() {
+    if (proyectos.length) return Promise.resolve();
+    var previos = C.normalizarDatos(leerJSON(CLAVE_DATOS, { proyectos: [] }));
+    if (!previos.length) return Promise.resolve();
+    proyectos = previos;
+    return ARCHIVOS.guardarTodos(proyectos).then(function () {
+      avisar('Datos trasladados', previos.length + ' proyecto(s) ahora se guardan en la carpeta de datos.', 'ok');
+    });
   }
 
   function guardarDatos() {
+    if (ARCHIVOS) {
+      return ARCHIVOS.guardarTodos(proyectos).catch(function (e) {
+        console.error(e);
+        avisar('No se pudo guardar en la carpeta', String((e && e.message) || e), 'vencido');
+      });
+    }
     guardarJSON(CLAVE_DATOS, { version: C.VERSION, actualizado: new Date().toISOString(), proyectos: proyectos });
+    return Promise.resolve();
   }
 
-  function guardarPrefs() { guardarJSON(CLAVE_PREFS, prefs); }
+  function guardarPrefs() {
+    if (ARCHIVOS) return ARCHIVOS.guardarPrefs(prefs).catch(function (e) { console.error(e); });
+    guardarJSON(CLAVE_PREFS, prefs);
+    return Promise.resolve();
+  }
 
   // --- Utilidades de interfaz ----------------------------------------------
 
@@ -78,6 +121,29 @@
       caja.style.transform = 'translateY(8px)';
       setTimeout(function () { caja.remove(); }, 300);
     }, 6000);
+  }
+
+  /** Muestra dónde están guardados los datos y ofrece abrir la carpeta. */
+  function pintarUbicacion() {
+    var caja = $('#pieUbicacion');
+    if (!ARCHIVOS) {
+      caja.innerHTML = 'Los datos se guardan solo en este computador. Usa <em>Exportar respaldo</em> para llevártelos.';
+      return;
+    }
+    ARCHIVOS.ruta().then(function (r) {
+      caja.textContent = 'Tus proyectos se guardan como archivos en ';
+      var ruta = document.createElement('code');
+      ruta.textContent = r.carpeta;
+      caja.appendChild(ruta);
+      var boton = document.createElement('button');
+      boton.id = 'btnCarpeta';
+      boton.className = 'btn sutil';
+      boton.textContent = 'Abrir carpeta';
+      boton.addEventListener('click', function () {
+        ARCHIVOS.abrirCarpeta().catch(function (e) { avisar('No se pudo abrir la carpeta', String(e.message || e), 'vencido'); });
+      });
+      caja.appendChild(boton);
+    });
   }
 
   function aplicarTema() {
@@ -714,17 +780,19 @@
   // --- Arranque -------------------------------------------------------------
 
   function iniciar() {
-    cargarTodo();
-    aplicarTema();
-    pintarBotonAlertas();
-    $$('.chip', $('#filtros')).forEach(function (c) {
-      c.classList.toggle('activo', c.dataset.filtro === prefs.filtro);
-    });
+    conectar();
     $('#pieVersion').textContent = 'Reloj de Eventos v' + C.VERSION +
       (window.relojEscritorio ? ' · app de escritorio' : '');
-    conectar();
-    render();
-    setInterval(tick, 1000);
+    cargarTodo().then(function () {
+      aplicarTema();
+      pintarBotonAlertas();
+      pintarUbicacion();
+      $$('.chip', $('#filtros')).forEach(function (c) {
+        c.classList.toggle('activo', c.dataset.filtro === prefs.filtro);
+      });
+      render();
+      setInterval(tick, 1000);
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);

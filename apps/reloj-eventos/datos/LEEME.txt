@@ -1,0 +1,20 @@
+CARPETA DE DATOS — Reloj de Eventos
+===================================
+
+Aquí queda guardado todo lo que creas en la aplicación:
+
+  datos/
+  ├── proyectos/               un archivo .json por proyecto
+  │   ├── licitacion-1234-56-le26__proy_abc123.json
+  │   └── cumpleanos-de-mama__proy_def456.json
+  ├── preferencias.json        tema, filtro y avisos
+  └── LEEME.txt                este archivo
+
+Cada proyecto es un archivo de texto legible: puedes abrirlo, copiarlo o
+mandárselo a otro computador. Para respaldar todo, basta con copiar esta
+carpeta completa (o usar "⋯ → Exportar respaldo" dentro de la aplicación).
+
+Si editas un archivo a mano y queda mal escrito, la aplicación lo ignora y
+NO lo borra, para que puedas arreglarlo con calma.
+
+Estos archivos no se suben al repositorio: .gitignore los deja fuera.

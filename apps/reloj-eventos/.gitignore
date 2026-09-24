@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+
+# Los proyectos que guardes son tuyos: quedan en el equipo, no en el repositorio.
+datos/*
+!datos/LEEME.txt
