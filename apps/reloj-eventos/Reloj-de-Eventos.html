@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<!--
+  Reloj de Eventos — versión de un solo archivo.
+  Generado con "npm run portable"; no editar a mano: los cambios van en src/.
+-->
+
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reloj de Eventos</title>
+<style>
+/* Reloj de Eventos — hoja de estilos */
+
+:root {
+  --fondo: #0b1120;
+  --fondo-2: #111a2e;
+  --tarjeta: #151f36;
+  --tarjeta-2: #1b2743;
+  --borde: #263352;
+  --texto: #e8edf9;
+  --texto-2: #9aa9c7;
+  --texto-3: #6b7a9b;
+  --acento: #38bdf8;
+  --acento-fuerte: #0ea5e9;
+  --ok: #34d399;
+  --atencion: #facc15;
+  --critico: #fb923c;
+  --peligro: #f87171;
+  --sombra: 0 10px 30px rgba(3, 7, 18, .45);
+  --radio: 14px;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+:root[data-tema="claro"] {
+  --fondo: #f1f5fb;
+  --fondo-2: #e6ecf7;
+  --tarjeta: #ffffff;
+  --tarjeta-2: #f4f7fd;
+  --borde: #d7e0ef;
+  --texto: #10192c;
+  --texto-2: #52627f;
+  --texto-3: #7c8aa5;
+  --acento: #0284c7;
+  --acento-fuerte: #0369a1;
+  --ok: #059669;
+  --atencion: #b45309;
+  --critico: #c2410c;
+  --peligro: #dc2626;
+  --sombra: 0 10px 28px rgba(15, 23, 42, .12);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 24px 40px;
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 520px at 12% -12%, rgba(56, 189, 248, .16), transparent 60%),
+    radial-gradient(900px 480px at 92% 0%, rgba(167, 139, 250, .14), transparent 55%),
+    var(--fondo);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.25; }
+
+/* --- Barra superior ------------------------------------------------------ */
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px 0 18px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: linear-gradient(var(--fondo) 72%, transparent);
+}
+
+.marca { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+.marca h1 { font-size: 20px; letter-spacing: -.02em; }
+.marca p { margin: 2px 0 0; color: var(--texto-2); font-size: 12.5px; }
+.logo { font-size: 30px; filter: drop-shadow(0 4px 10px rgba(56, 189, 248, .35)); }
+
+.reloj-actual {
+  display: flex; flex-direction: column; align-items: flex-end;
+  padding: 6px 14px; border-left: 1px solid var(--borde); border-right: 1px solid var(--borde);
+}
+.reloj-actual strong { font-family: var(--mono); font-size: 22px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.reloj-actual small { color: var(--texto-2); font-size: 11.5px; text-transform: capitalize; }
+
+.acciones { display: flex; align-items: center; gap: 8px; }
+
+.btn {
+  border: 1px solid var(--borde);
+  background: var(--tarjeta);
+  color: var(--texto);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .08s;
+}
+.btn:hover { background: var(--tarjeta-2); border-color: var(--acento); }
+.btn:active { transform: translateY(1px); }
+.btn.primario { background: var(--acento-fuerte); border-color: var(--acento-fuerte); color: #04131f; }
+.btn.primario:hover { filter: brightness(1.08); }
+.btn.sutil { background: transparent; color: var(--texto-2); }
+.btn.sutil:hover { color: var(--texto); }
+.btn.icono { padding: 8px 10px; font-size: 15px; display: inline-grid; place-items: center; }
+.btn.icono svg { display: block; }
+#btnAlertas.activo { color: var(--acento); border-color: var(--acento); }
+#btnAlertas .tachado { opacity: 1; }
+#btnAlertas.activo .tachado { opacity: 0; }
+.btn.peligro, .menu .peligro { color: var(--peligro); }
+
+.menu-envoltorio { position: relative; }
+.menu {
+  position: absolute; right: 0; top: calc(100% + 6px);
+  background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px;
+  box-shadow: var(--sombra); padding: 6px; min-width: 220px; z-index: 50;
+}
+.menu button {
+  display: block; width: 100%; text-align: left;
+  background: none; border: 0; color: inherit;
+  padding: 9px 12px; border-radius: 8px; font-size: 13.5px; cursor: pointer;
+}
+.menu button:hover { background: var(--tarjeta-2); }
+
+/* --- Reloj destacado ----------------------------------------------------- */
+
+.destacado {
+  display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, var(--tarjeta) 0%, var(--tarjeta-2) 100%);
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: var(--sombra);
+  margin-bottom: 18px;
+}
+.destacado-info { min-width: 260px; flex: 1 1 320px; }
+.etiqueta {
+  display: inline-block; text-transform: uppercase; letter-spacing: .12em;
+  font-size: 10.5px; font-weight: 700; color: var(--texto-3); margin-bottom: 8px;
+}
+.destacado-info h2 { font-size: 26px; letter-spacing: -.02em; }
+.destacado-info p { margin: 6px 0 0; color: var(--texto-2); font-size: 14px; }
+.destacado-fecha { color: var(--texto-3) !important; font-size: 12.5px !important; text-transform: capitalize; }
+
+.destacado-reloj { text-align: right; min-width: 280px; flex: 0 1 auto; }
+.cuenta-grande {
+  font-family: var(--mono); font-size: clamp(34px, 5.2vw, 54px); font-weight: 700;
+  letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.05;
+  color: var(--acento);
+}
+.cuenta-horas { font-size: 19px; font-weight: 700; margin-top: 2px; }
+.cuenta-frase { color: var(--texto-2); font-size: 13px; margin-top: 2px; }
+.destacado[data-estado="critico"] .cuenta-grande { color: var(--critico); }
+.destacado[data-estado="vencido"] .cuenta-grande { color: var(--peligro); }
+.destacado[data-estado="atencion"] .cuenta-grande { color: var(--atencion); }
+
+.barra-tramo {
+  margin-top: 12px; height: 6px; border-radius: 99px; background: var(--fondo-2);
+  overflow: hidden; border: 1px solid var(--borde);
+}
+.barra-tramo span {
+  display: block; height: 100%; background: linear-gradient(90deg, var(--acento), var(--acento-fuerte));
+  transition: width .6s ease;
+}
+
+/* --- Resumen y filtros --------------------------------------------------- */
+
+.resumen { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.pastilla {
+  display: flex; align-items: baseline; gap: 7px;
+  background: var(--tarjeta); border: 1px solid var(--borde);
+  padding: 8px 14px; border-radius: 99px;
+}
+.pastilla strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+.pastilla span { color: var(--texto-2); font-size: 12.5px; }
+.pastilla.critico strong { color: var(--critico); }
+.pastilla.vencido strong { color: var(--peligro); }
+
+.controles { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+#busqueda {
+  flex: 1 1 260px; max-width: 380px;
+  background: var(--tarjeta); border: 1px solid var(--borde); color: var(--texto);
+  padding: 10px 14px; border-radius: 10px; font-size: 14px;
+}
+#busqueda:focus, input:focus, textarea:focus, select:focus { outline: 2px solid var(--acento); outline-offset: 1px; }
+
+.filtros { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  background: transparent; border: 1px solid var(--borde); color: var(--texto-2);
+  padding: 7px 13px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.chip:hover { color: var(--texto); }
+.chip.activo { background: var(--acento-fuerte); border-color: var(--acento-fuerte); color: #04131f; }
+
+/* --- Tarjetas de proyecto ------------------------------------------------ */
+
+.lista { display: grid; gap: 14px; }
+
+.proyecto {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--color-proyecto, var(--acento));
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+.proyecto.completo { opacity: .72; }
+
+.proyecto-cabecera {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 16px 18px; cursor: pointer; user-select: none;
+}
+.proyecto-cabecera:hover { background: var(--tarjeta-2); }
+.proyecto-titulo { flex: 1 1 260px; min-width: 0; }
+.proyecto-titulo h3 { font-size: 16.5px; display: flex; align-items: center; gap: 8px; }
+.proyecto-titulo p { margin: 3px 0 0; color: var(--texto-2); font-size: 12.5px; }
+.proyecto-titulo .paso-actual { color: var(--texto-2); font-size: 13px; margin-top: 6px; }
+.proyecto-titulo .paso-actual strong { color: var(--texto); font-weight: 600; }
+
+.proyecto-reloj { text-align: right; min-width: 170px; }
+.proyecto-reloj .cuenta {
+  font-family: var(--mono); font-size: 25px; font-weight: 700;
+  font-variant-numeric: tabular-nums; letter-spacing: -.01em; display: block;
+}
+.proyecto-reloj .horas { font-size: 12.5px; color: var(--texto-2); }
+
+.cuenta[data-estado="futuro"] { color: var(--acento); }
+.cuenta[data-estado="atencion"] { color: var(--atencion); }
+.cuenta[data-estado="critico"] { color: var(--critico); }
+.cuenta[data-estado="vencido"] { color: var(--peligro); }
+.cuenta[data-estado="completado"] { color: var(--ok); }
+
+.avance { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+.avance .barra-tramo { flex: 1; margin: 0; }
+.avance small { color: var(--texto-3); font-size: 11.5px; white-space: nowrap; }
+
+.flecha { color: var(--texto-3); transition: transform .2s; font-size: 12px; }
+.proyecto[open] .flecha, .proyecto.abierto .flecha { transform: rotate(90deg); }
+
+.proyecto-cuerpo { border-top: 1px solid var(--borde); padding: 6px 18px 16px; }
+.proyecto-descripcion { color: var(--texto-2); font-size: 13px; margin: 12px 0 4px; white-space: pre-wrap; }
+
+.pasos { list-style: none; margin: 10px 0 0; padding: 0; position: relative; }
+.pasos::before {
+  content: ""; position: absolute; left: 9px; top: 12px; bottom: 12px;
+  width: 2px; background: var(--borde);
+}
+.paso {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 11px 10px 11px 0; position: relative;
+}
+.paso + .paso { border-top: 1px solid color-mix(in srgb, var(--borde) 55%, transparent); }
+.paso .punto {
+  flex: 0 0 auto; width: 20px; height: 20px; margin-top: 2px; border-radius: 50%;
+  border: 2px solid var(--borde); background: var(--tarjeta);
+  display: grid; place-items: center; cursor: pointer; z-index: 1;
+  font-size: 11px; color: transparent; padding: 0; transition: all .15s;
+}
+.paso .punto:hover { border-color: var(--ok); }
+.paso[data-estado="completado"] .punto { background: var(--ok); border-color: var(--ok); color: #04131f; }
+.paso[data-estado="vencido"] .punto { border-color: var(--peligro); }
+.paso[data-estado="critico"] .punto { border-color: var(--critico); }
+.paso[data-estado="atencion"] .punto { border-color: var(--atencion); }
+
+.paso-datos { flex: 1 1 auto; min-width: 0; }
+.paso-datos h4 { margin: 0; font-size: 14.5px; font-weight: 600; }
+.paso[data-estado="completado"] .paso-datos h4 { text-decoration: line-through; color: var(--texto-2); }
+.paso-datos .fecha { color: var(--texto-2); font-size: 12.5px; text-transform: capitalize; }
+.paso-datos .nota { color: var(--texto-3); font-size: 12.5px; margin: 4px 0 0; white-space: pre-wrap; }
+
+.paso-reloj { text-align: right; flex: 0 0 auto; min-width: 128px; }
+.paso-reloj .cuenta { font-family: var(--mono); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.paso-reloj .horas { display: block; color: var(--texto-3); font-size: 11.5px; }
+
+.insignia {
+  display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; padding: 2px 8px; border-radius: 99px;
+  border: 1px solid currentColor; vertical-align: middle;
+}
+.insignia[data-estado="completado"] { color: var(--ok); }
+.insignia[data-estado="vencido"] { color: var(--peligro); }
+.insignia[data-estado="critico"] { color: var(--critico); }
+.insignia[data-estado="atencion"] { color: var(--atencion); }
+.insignia[data-estado="futuro"] { color: var(--texto-3); }
+.insignia[data-estado="sin-fecha"] { color: var(--texto-3); }
+
+.proyecto-pie { display: flex; gap: 8px; justify-content: flex-end; padding-top: 12px; }
+
+/* --- Vacío y pie --------------------------------------------------------- */
+
+.vacio { text-align: center; padding: 70px 20px; color: var(--texto-2); }
+.vacio h2 { font-size: 20px; margin-bottom: 8px; color: var(--texto); }
+.logo-grande { font-size: 52px; display: block; margin-bottom: 14px; }
+.vacio-botones { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+
+.pie {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--borde);
+  color: var(--texto-3); font-size: 12px;
+}
+.pie span { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pie code {
+  font-family: var(--mono); font-size: 11.5px; color: var(--texto-2);
+  background: var(--tarjeta); border: 1px solid var(--borde);
+  padding: 2px 7px; border-radius: 6px; word-break: break-all;
+}
+.pie .btn { padding: 4px 10px; font-size: 11.5px; }
+
+/* --- Modales ------------------------------------------------------------- */
+
+.modal {
+  width: min(680px, calc(100vw - 32px));
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  background: var(--tarjeta);
+  color: var(--texto);
+  padding: 0;
+  box-shadow: 0 24px 70px rgba(2, 6, 18, .6);
+}
+.modal::backdrop { background: rgba(3, 7, 18, .66); backdrop-filter: blur(3px); }
+.modal-cabecera {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; border-bottom: 1px solid var(--borde);
+}
+.modal-cabecera h2 { font-size: 17px; }
+.modal-cuerpo { padding: 18px 20px; max-height: min(64vh, 620px); overflow-y: auto; }
+.modal-pie {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 14px 20px; border-top: 1px solid var(--borde); background: var(--tarjeta-2);
+}
+
+.campo { display: block; margin-bottom: 16px; }
+.campo > span { display: block; font-size: 12.5px; font-weight: 600; color: var(--texto-2); margin-bottom: 6px; }
+.campo input[type="text"], .campo input[type="datetime-local"], .campo textarea, .paso-editor input, .paso-editor textarea {
+  width: 100%; background: var(--fondo-2); border: 1px solid var(--borde); color: var(--texto);
+  padding: 9px 12px; border-radius: 9px; font-size: 14px; font-family: inherit;
+}
+.campo textarea, .paso-editor textarea { resize: vertical; }
+.ayuda { color: var(--texto-3); font-size: 12.5px; margin: -8px 0 16px; }
+.error { color: var(--peligro); font-size: 13px; font-weight: 600; }
+
+.colores { display: flex; gap: 8px; flex-wrap: wrap; }
+.colores button {
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; padding: 0;
+}
+.colores button[aria-pressed="true"] { border-color: var(--texto); transform: scale(1.12); }
+
+.cabecera-pasos { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.cabecera-pasos > span { font-size: 12.5px; font-weight: 600; color: var(--texto-2); }
+
+.lista-pasos { display: grid; gap: 10px; }
+.paso-editor {
+  background: var(--fondo-2); border: 1px solid var(--borde); border-radius: 12px; padding: 12px;
+  display: grid; grid-template-columns: 1fr 210px auto; gap: 8px; align-items: start;
+}
+.paso-editor textarea { grid-column: 1 / -1; }
+.paso-editor .quitar {
+  background: none; border: 1px solid var(--borde); color: var(--texto-3);
+  border-radius: 8px; cursor: pointer; padding: 9px 11px;
+}
+.paso-editor .quitar:hover { color: var(--peligro); border-color: var(--peligro); }
+
+.lista-plantillas { display: grid; gap: 10px; }
+.plantilla {
+  text-align: left; width: 100%; cursor: pointer;
+  background: var(--fondo-2); border: 1px solid var(--borde); border-left: 4px solid var(--color-plantilla, var(--acento));
+  border-radius: 12px; padding: 14px 16px; color: inherit; font: inherit;
+}
+.plantilla:hover { border-color: var(--acento); background: var(--tarjeta-2); }
+.plantilla strong { display: block; font-size: 14.5px; }
+.plantilla span { color: var(--texto-2); font-size: 12.5px; }
+.plantilla ol { margin: 8px 0 0 18px; padding: 0; color: var(--texto-3); font-size: 12px; }
+
+/* --- Avisos -------------------------------------------------------------- */
+
+.toasts { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 10px; z-index: 100; max-width: 340px; }
+.toast {
+  background: var(--tarjeta); border: 1px solid var(--borde); border-left: 4px solid var(--acento);
+  border-radius: 12px; padding: 12px 14px; box-shadow: var(--sombra);
+  animation: entrar .25s ease;
+}
+.toast strong { display: block; font-size: 13.5px; }
+.toast span { color: var(--texto-2); font-size: 12.5px; }
+.toast.critico { border-left-color: var(--critico); }
+.toast.vencido { border-left-color: var(--peligro); }
+.toast.ok { border-left-color: var(--ok); }
+
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 720px) {
+  body { padding: 0 14px 30px; }
+  .reloj-actual { border: 0; padding: 0; align-items: flex-start; }
+  .destacado-reloj { text-align: left; }
+  .paso-editor { grid-template-columns: 1fr; }
+  .proyecto-reloj { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="marca">
+    <span class="logo" aria-hidden="true">⏳</span>
+    <div>
+      <h1>Reloj de Eventos</h1>
+      <p>Cuenta regresiva para tus proyectos, trámites y fechas importantes</p>
+    </div>
+  </div>
+
+  <div class="reloj-actual" title="Hora local de tu computador">
+    <strong id="horaActual">--:--:--</strong>
+    <small id="fechaActual">&nbsp;</small>
+  </div>
+
+  <div class="acciones">
+    <button id="btnNuevo" class="btn primario">+ Nuevo proyecto</button>
+    <button id="btnPlantilla" class="btn">Plantillas</button>
+    <button id="btnAlertas" class="btn icono" title="Activar avisos de escritorio" aria-label="Activar avisos de escritorio"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><line class="tachado" x1="4" y1="20" x2="20" y2="4"/></svg></button>
+    <button id="btnTema" class="btn icono" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"/></svg></button>
+    <div class="menu-envoltorio">
+      <button id="btnMas" class="btn icono" title="Más opciones" aria-label="Más opciones" aria-haspopup="true" aria-expanded="false">⋯</button>
+      <div class="menu" id="menuMas" hidden>
+        <button data-accion="exportar">Exportar respaldo (.json)</button>
+        <button data-accion="importar">Importar respaldo…</button>
+        <button data-accion="ejemplo">Cargar datos de ejemplo</button>
+        <button data-accion="borrar" class="peligro">Borrar todo</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="destacado" id="destacado" hidden>
+  <div class="destacado-info">
+    <span class="etiqueta">Próximo vencimiento</span>
+    <h2 id="destacadoHito">—</h2>
+    <p id="destacadoProyecto">—</p>
+    <p class="destacado-fecha" id="destacadoFecha">—</p>
+  </div>
+  <div class="destacado-reloj">
+    <div class="cuenta-grande" id="destacadoCuenta">--:--:--</div>
+    <div class="cuenta-horas" id="destacadoHoras">— h</div>
+    <div class="cuenta-frase" id="destacadoFrase">—</div>
+    <div class="barra-tramo"><span id="destacadoBarra" style="width:0%"></span></div>
+  </div>
+</section>
+
+<section class="resumen" id="resumen" hidden>
+  <div class="pastilla"><strong id="statProyectos">0</strong><span>proyectos</span></div>
+  <div class="pastilla"><strong id="statPendientes">0</strong><span>pasos pendientes</span></div>
+  <div class="pastilla critico"><strong id="statCriticos">0</strong><span>en las próximas 24 h</span></div>
+  <div class="pastilla vencido"><strong id="statVencidos">0</strong><span>vencidos</span></div>
+</section>
+
+<section class="controles">
+  <input id="busqueda" type="search" placeholder="Buscar proyecto o paso…" aria-label="Buscar">
+  <div class="filtros" id="filtros">
+    <button class="chip activo" data-filtro="todos">Todos</button>
+    <button class="chip" data-filtro="activos">Activos</button>
+    <button class="chip" data-filtro="urgentes">Urgentes</button>
+    <button class="chip" data-filtro="vencidos">Vencidos</button>
+    <button class="chip" data-filtro="completados">Completados</button>
+  </div>
+</section>
+
+<main id="lista" class="lista"></main>
+
+<div id="vacio" class="vacio" hidden>
+  <span class="logo-grande" aria-hidden="true">🗓️</span>
+  <h2>Todavía no hay nada que contar</h2>
+  <p>Crea tu primer proyecto con todos sus pasos, o parte desde una plantilla<br>como la de <strong>Licitación Mercado Público</strong>.</p>
+  <div class="vacio-botones">
+    <button class="btn primario" data-accion="nuevo">+ Nuevo proyecto</button>
+    <button class="btn" data-accion="plantillas">Ver plantillas</button>
+    <button class="btn sutil" data-accion="ejemplo">Cargar ejemplo</button>
+  </div>
+</div>
+
+<footer class="pie">
+  <span id="pieUbicacion">Los datos se guardan solo en este computador. Usa <em>Exportar respaldo</em> para llevártelos.</span>
+  <span id="pieVersion"></span>
+</footer>
+
+<!-- Editor de proyecto -->
+<dialog id="modalProyecto" class="modal">
+  <form method="dialog" id="formProyecto">
+    <header class="modal-cabecera">
+      <h2 id="modalTitulo">Nuevo proyecto</h2>
+      <button type="button" class="btn icono" data-cerrar aria-label="Cerrar">✕</button>
+    </header>
+
+    <div class="modal-cuerpo">
+      <label class="campo">
+        <span>Nombre del proyecto o evento *</span>
+        <input id="campoNombre" type="text" maxlength="120" required placeholder="Ej: Licitación 1234-56-LE26 — Municipalidad de…">
+      </label>
+
+      <label class="campo">
+        <span>Descripción</span>
+        <textarea id="campoDescripcion" rows="2" maxlength="600" placeholder="Contexto, número de ID, monto, link al portal…"></textarea>
+      </label>
+
+      <div class="campo">
+        <span>Color</span>
+        <div class="colores" id="campoColores"></div>
+      </div>
+
+      <div class="campo">
+        <div class="cabecera-pasos">
+          <span>Pasos / fechas (puedes agregar todos los que necesites) *</span>
+          <button type="button" class="btn sutil" id="btnAgregarPaso">+ Agregar paso</button>
+        </div>
+        <div id="listaPasos" class="lista-pasos"></div>
+      </div>
+
+      <p class="error" id="errorForm" hidden></p>
+    </div>
+
+    <footer class="modal-pie">
+      <button type="button" class="btn sutil" data-cerrar>Cancelar</button>
+      <button type="submit" class="btn primario" id="btnGuardar">Guardar proyecto</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- Plantillas -->
+<dialog id="modalPlantilla" class="modal">
+  <header class="modal-cabecera">
+    <h2>Empezar desde una plantilla</h2>
+    <button type="button" class="btn icono" data-cerrar aria-label="Cerrar">✕</button>
+  </header>
+  <div class="modal-cuerpo">
+    <label class="campo">
+      <span>Fecha y hora de inicio (el primer paso)</span>
+      <input id="campoFechaBase" type="datetime-local">
+    </label>
+    <p class="ayuda">Los demás pasos se colocan automáticamente después de esa fecha. Luego puedes ajustar cada uno.</p>
+    <div id="listaPlantillas" class="lista-plantillas"></div>
+  </div>
+</dialog>
+
+<input type="file" id="archivoImportar" accept="application/json,.json" hidden>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script>
+/*
+ * Reloj de Eventos — núcleo de lógica (sin interfaz).
+ * Se carga como <script> clásico en el navegador y con require() en las pruebas.
+ */
+(function (global) {
+  'use strict';
+
+  var MS_SEGUNDO = 1000;
+  var MS_MINUTO = 60 * MS_SEGUNDO;
+  var MS_HORA = 60 * MS_MINUTO;
+  var MS_DIA = 24 * MS_HORA;
+
+  // Un paso pasa a "crítico" dentro de las últimas 24 h y a "atención" dentro de 7 días.
+  var UMBRAL_CRITICO = 24 * MS_HORA;
+  var UMBRAL_ATENCION = 7 * MS_DIA;
+
+  var COLORES = ['#38bdf8', '#a78bfa', '#f472b6', '#fb923c', '#34d399', '#facc15', '#f87171', '#60a5fa'];
+
+  function crearId(prefijo) {
+    return (prefijo || 'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  /** Convierte lo que sea (Date, número, texto ISO) en Date, o null si no es válido. */
+  function aDate(valor) {
+    if (valor instanceof Date) return isNaN(valor.getTime()) ? null : new Date(valor.getTime());
+    if (typeof valor === 'number') return isNaN(valor) ? null : new Date(valor);
+    if (typeof valor === 'string' && valor.trim()) {
+      var d = new Date(valor);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+
+  function enMs(momento) {
+    if (momento == null) return Date.now();
+    if (momento instanceof Date) return momento.getTime();
+    if (typeof momento === 'number') return momento;
+    var d = aDate(momento);
+    return d ? d.getTime() : Date.now();
+  }
+
+  /** Texto para <input type="datetime-local">, en hora local. */
+  function aValorInput(valor) {
+    var d = aDate(valor);
+    if (!d) return '';
+    var p = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) +
+      'T' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  /** Texto de <input type="datetime-local"> (hora local) a ISO absoluto. */
+  function desdeValorInput(texto) {
+    var d = aDate(texto);
+    return d ? d.toISOString() : null;
+  }
+
+  function desglose(ms) {
+    var vencido = ms < 0;
+    var abs = Math.abs(ms);
+    return {
+      ms: ms,
+      vencido: vencido,
+      dias: Math.floor(abs / MS_DIA),
+      horas: Math.floor((abs % MS_DIA) / MS_HORA),
+      minutos: Math.floor((abs % MS_HORA) / MS_MINUTO),
+      segundos: Math.floor((abs % MS_MINUTO) / MS_SEGUNDO),
+      totalHoras: abs / MS_HORA,
+      totalDias: abs / MS_DIA
+    };
+  }
+
+  function dosDigitos(n) { return String(n).padStart(2, '0'); }
+
+  /** "3d 04:12:55" o "04:12:55" cuando falta menos de un día. */
+  function formatearCuenta(ms) {
+    var d = desglose(ms);
+    var reloj = dosDigitos(d.horas) + ':' + dosDigitos(d.minutos) + ':' + dosDigitos(d.segundos);
+    return d.dias > 0 ? d.dias + 'd ' + reloj : reloj;
+  }
+
+  /** Horas totales que faltan, que es la unidad que pide el reloj: "76,3 h". */
+  function formatearHoras(ms) {
+    var total = desglose(ms).totalHoras;
+    var texto = total >= 100
+      ? String(Math.round(total)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      : total.toFixed(1).replace('.', ',');
+    return texto + ' h';
+  }
+
+  /** Como formatearHoras, pero baja a minutos o segundos cuando queda menos de una hora. */
+  function formatearHorasOMinutos(ms) {
+    var d = desglose(ms);
+    if (d.totalHoras >= 1) return formatearHoras(ms);
+    var minutos = Math.floor(Math.abs(ms) / MS_MINUTO);
+    if (minutos >= 1) return minutos + ' min';
+    return Math.floor(Math.abs(ms) / MS_SEGUNDO) + ' s';
+  }
+
+  /** "faltan 3 días y 4 horas" / "venció hace 2 horas". */
+  function frasePlazo(ms) {
+    var d = desglose(ms);
+    var texto;
+    var plural = function (n, singular, prular) { return n + ' ' + (n === 1 ? singular : prular); };
+    if (d.dias > 0) {
+      texto = plural(d.dias, 'día', 'días') + (d.horas ? ' y ' + plural(d.horas, 'hora', 'horas') : '');
+    } else if (d.horas > 0) {
+      texto = plural(d.horas, 'hora', 'horas') + (d.minutos ? ' y ' + plural(d.minutos, 'minuto', 'minutos') : '');
+    } else if (d.minutos > 0) {
+      texto = plural(d.minutos, 'minuto', 'minutos') + (d.segundos ? ' y ' + plural(d.segundos, 'segundo', 'segundos') : '');
+    } else {
+      texto = plural(d.segundos, 'segundo', 'segundos');
+    }
+    if (d.vencido) return 'venció hace ' + texto;
+    return (/^1 (día|hora|minuto|segundo)$/.test(texto) ? 'falta ' : 'faltan ') + texto;
+  }
+
+  var FORMATO_LARGO = null;
+  /** "lun 5 oct 2026, 15:30" */
+  function formatearFecha(valor) {
+    var d = aDate(valor);
+    if (!d) return 'Sin fecha';
+    try {
+      if (!FORMATO_LARGO) {
+        FORMATO_LARGO = new Intl.DateTimeFormat('es-CL', {
+          weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+        });
+      }
+      return FORMATO_LARGO.format(d);
+    } catch (e) {
+      return d.toLocaleString();
+    }
+  }
+
+  function estadoHito(hito, ahora) {
+    if (!hito) return 'sin-fecha';
+    if (hito.completado) return 'completado';
+    var fecha = aDate(hito.fecha);
+    if (!fecha) return 'sin-fecha';
+    var restante = fecha.getTime() - enMs(ahora);
+    if (restante < 0) return 'vencido';
+    if (restante <= UMBRAL_CRITICO) return 'critico';
+    if (restante <= UMBRAL_ATENCION) return 'atencion';
+    return 'futuro';
+  }
+
+  var ETIQUETAS_ESTADO = {
+    completado: 'Listo',
+    vencido: 'Vencido',
+    critico: 'Últimas horas',
+    atencion: 'Esta semana',
+    futuro: 'Programado',
+    'sin-fecha': 'Sin fecha'
+  };
+
+  /** Copia ordenada cronológicamente; los pasos sin fecha quedan al final. */
+  function ordenarHitos(hitos) {
+    return (hitos || []).slice().sort(function (a, b) {
+      var fa = aDate(a && a.fecha);
+      var fb = aDate(b && b.fecha);
+      if (!fa && !fb) return 0;
+      if (!fa) return 1;
+      if (!fb) return -1;
+      return fa.getTime() - fb.getTime();
+    });
+  }
+
+  /** El paso pendiente más cercano en el tiempo (aunque ya esté vencido). */
+  function proximoHito(proyecto, ahora) {
+    var pendientes = ordenarHitos((proyecto && proyecto.hitos) || []).filter(function (h) {
+      return !h.completado && aDate(h.fecha);
+    });
+    return pendientes.length ? pendientes[0] : null;
+  }
+
+  /** El último paso ya cumplido o vencido antes de "ahora": sirve de inicio del tramo. */
+  function hitoAnterior(proyecto, referencia, ahora) {
+    var t = referencia ? enMs(aDate(referencia.fecha)) : enMs(ahora);
+    var previos = ordenarHitos((proyecto && proyecto.hitos) || []).filter(function (h) {
+      var f = aDate(h.fecha);
+      return f && f.getTime() < t;
+    });
+    return previos.length ? previos[previos.length - 1] : null;
+  }
+
+  function resumenProyecto(proyecto, ahora) {
+    var t = enMs(ahora);
+    var hitos = (proyecto && proyecto.hitos) || [];
+    var completados = 0, vencidos = 0, pendientes = 0;
+    hitos.forEach(function (h) {
+      if (h.completado) { completados++; return; }
+      pendientes++;
+      var f = aDate(h.fecha);
+      if (f && f.getTime() < t) vencidos++;
+    });
+    var proximo = proximoHito(proyecto, t);
+    var restanteMs = proximo ? enMs(aDate(proximo.fecha)) - t : null;
+    var estado = hitos.length && completados === hitos.length
+      ? 'completado'
+      : (proximo ? estadoHito(proximo, t) : 'sin-fecha');
+    return {
+      total: hitos.length,
+      completados: completados,
+      pendientes: pendientes,
+      vencidos: vencidos,
+      proximo: proximo,
+      anterior: proximo ? hitoAnterior(proyecto, proximo, t) : null,
+      restanteMs: restanteMs,
+      progreso: hitos.length ? completados / hitos.length : 0,
+      estado: estado
+    };
+  }
+
+  /** Avance (0..1) dentro del tramo entre el paso anterior y el siguiente. */
+  function progresoTramo(desde, hasta, ahora) {
+    var fin = enMs(aDate(hasta));
+    var inicio = desde ? enMs(aDate(desde)) : null;
+    var t = enMs(ahora);
+    if (!fin) return 0;
+    if (inicio == null || inicio >= fin) inicio = fin - 7 * MS_DIA;
+    if (t <= inicio) return 0;
+    if (t >= fin) return 1;
+    return (t - inicio) / (fin - inicio);
+  }
+
+  /** Ordena proyectos por urgencia: primero lo que vence antes; lo terminado al final. */
+  function ordenarProyectos(proyectos, ahora) {
+    var t = enMs(ahora);
+    return (proyectos || []).slice().sort(function (a, b) {
+      var ra = resumenProyecto(a, t);
+      var rb = resumenProyecto(b, t);
+      var va = ra.restanteMs == null ? Infinity : ra.restanteMs;
+      var vb = rb.restanteMs == null ? Infinity : rb.restanteMs;
+      if (va !== vb) return va - vb;
+      return String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es');
+    });
+  }
+
+  /** El vencimiento más próximo de toda la cartera, para el reloj principal. */
+  function proximoGlobal(proyectos, ahora) {
+    var t = enMs(ahora);
+    var mejor = null;
+    (proyectos || []).forEach(function (p) {
+      var r = resumenProyecto(p, t);
+      if (!r.proximo) return;
+      if (!mejor || r.restanteMs < mejor.restanteMs) {
+        mejor = { proyecto: p, hito: r.proximo, anterior: r.anterior, restanteMs: r.restanteMs };
+      }
+    });
+    return mejor;
+  }
+
+  function estadisticas(proyectos, ahora) {
+    var t = enMs(ahora);
+    var total = 0, pendientes = 0, vencidos = 0, criticos = 0;
+    (proyectos || []).forEach(function (p) {
+      (p.hitos || []).forEach(function (h) {
+        total++;
+        if (h.completado) return;
+        pendientes++;
+        var estado = estadoHito(h, t);
+        if (estado === 'vencido') vencidos++;
+        else if (estado === 'critico') criticos++;
+      });
+    });
+    return { proyectos: (proyectos || []).length, hitos: total, pendientes: pendientes, vencidos: vencidos, criticos: criticos };
+  }
+
+  /**
+   * Avisos que corresponde mostrar ahora. Cada aviso trae una clave estable
+   * (paso + umbral) para que la interfaz no repita la misma notificación.
+   */
+  function alertasPendientes(proyectos, ahora, umbrales) {
+    var t = enMs(ahora);
+    var escalones = (umbrales && umbrales.length ? umbrales.slice() : [24 * MS_HORA, MS_HORA, 0])
+      .sort(function (a, b) { return b - a; });
+    var avisos = [];
+    (proyectos || []).forEach(function (p) {
+      (p.hitos || []).forEach(function (h) {
+        if (h.completado) return;
+        var f = aDate(h.fecha);
+        if (!f) return;
+        var restante = f.getTime() - t;
+        // No insistir con lo que venció hace más de un día.
+        if (restante < -MS_DIA) return;
+        var alcanzado = null;
+        for (var i = 0; i < escalones.length; i++) {
+          if (restante <= escalones[i]) alcanzado = escalones[i];
+        }
+        if (alcanzado == null) return;
+        avisos.push({
+          clave: h.id + ':' + alcanzado,
+          proyecto: p,
+          hito: h,
+          restanteMs: restante,
+          umbral: alcanzado
+        });
+      });
+    });
+    return avisos;
+  }
+
+  // --- Plantillas -----------------------------------------------------------
+
+  var PLANTILLAS = [
+    {
+      id: 'licitacion',
+      nombre: 'Licitación Mercado Público',
+      descripcion: 'Los plazos típicos de una licitación: preguntas, respuestas, cierre de ofertas y adjudicación.',
+      color: '#38bdf8',
+      hitos: [
+        { nombre: 'Publicación de las bases', descripcion: 'Revisar bases administrativas y técnicas, y anexos obligatorios.', offsetHoras: 0 },
+        { nombre: 'Cierre de preguntas', descripcion: 'Último momento para enviar consultas por el foro del portal.', offsetHoras: 72 },
+        { nombre: 'Publicación de respuestas', descripcion: 'Descargar el acta de respuestas y revisar si modifican las bases.', offsetHoras: 144 },
+        { nombre: 'Cierre de ofertas (fecha límite para participar)', descripcion: 'Subir oferta técnica y económica. No hay prórroga después de esta hora.', offsetHoras: 240 },
+        { nombre: 'Acto de apertura', descripcion: 'Apertura electrónica de las ofertas recibidas.', offsetHoras: 241 },
+        { nombre: 'Fecha estimada de adjudicación', descripcion: 'Revisar resultado y plazo para reclamos.', offsetHoras: 720 }
+      ]
+    },
+    {
+      id: 'cumpleanos',
+      nombre: 'Cumpleaños',
+      descripcion: 'Cuenta regresiva simple para una fecha importante.',
+      color: '#f472b6',
+      hitos: [
+        { nombre: 'Comprar el regalo', descripcion: '', offsetHoras: -168 },
+        { nombre: '¡Cumpleaños!', descripcion: '', offsetHoras: 0 }
+      ]
+    },
+    {
+      id: 'tramite',
+      nombre: 'Trámite o postulación',
+      descripcion: 'Reunir documentos, enviar, esperar respuesta y plazo de apelación.',
+      color: '#a78bfa',
+      hitos: [
+        { nombre: 'Reunir documentos', descripcion: '', offsetHoras: 0 },
+        { nombre: 'Enviar la solicitud', descripcion: '', offsetHoras: 48 },
+        { nombre: 'Plazo de respuesta de la institución', descripcion: '', offsetHoras: 480 },
+        { nombre: 'Último día para apelar', descripcion: '', offsetHoras: 600 }
+      ]
+    },
+    {
+      id: 'entrega',
+      nombre: 'Entrega de proyecto',
+      descripcion: 'Hitos de avance y entrega final con su revisión.',
+      color: '#34d399',
+      hitos: [
+        { nombre: 'Primer avance', descripcion: '', offsetHoras: 0 },
+        { nombre: 'Revisión con el cliente', descripcion: '', offsetHoras: 168 },
+        { nombre: 'Entrega final', descripcion: '', offsetHoras: 336 }
+      ]
+    }
+  ];
+
+  /** Crea un proyecto a partir de una plantilla, con los pasos desplazados desde una fecha base. */
+  function aplicarPlantilla(plantilla, fechaBase) {
+    var base = aDate(fechaBase) || new Date();
+    return normalizarProyecto({
+      nombre: plantilla.nombre,
+      descripcion: plantilla.descripcion,
+      color: plantilla.color,
+      hitos: plantilla.hitos.map(function (h) {
+        return {
+          nombre: h.nombre,
+          descripcion: h.descripcion,
+          fecha: new Date(base.getTime() + h.offsetHoras * MS_HORA).toISOString()
+        };
+      })
+    });
+  }
+
+  // --- Normalización y respaldo --------------------------------------------
+
+  function normalizarHito(hito) {
+    var fecha = aDate(hito && hito.fecha);
+    return {
+      id: (hito && hito.id) || crearId('hito'),
+      nombre: String((hito && hito.nombre) || 'Paso sin nombre').trim(),
+      descripcion: String((hito && hito.descripcion) || '').trim(),
+      fecha: fecha ? fecha.toISOString() : null,
+      completado: !!(hito && hito.completado)
+    };
+  }
+
+  function normalizarProyecto(proyecto) {
+    var p = proyecto || {};
+    return {
+      id: p.id || crearId('proy'),
+      nombre: String(p.nombre || 'Proyecto sin nombre').trim(),
+      descripcion: String(p.descripcion || '').trim(),
+      color: COLORES.indexOf(p.color) >= 0 ? p.color : (p.color || COLORES[0]),
+      creado: aDate(p.creado) ? aDate(p.creado).toISOString() : new Date().toISOString(),
+      hitos: ordenarHitos((p.hitos || []).map(normalizarHito))
+    };
+  }
+
+  /** Acepta el formato de respaldo {version, proyectos} o una lista suelta. */
+  function normalizarDatos(datos) {
+    var lista = Array.isArray(datos) ? datos : (datos && Array.isArray(datos.proyectos) ? datos.proyectos : []);
+    return lista.map(normalizarProyecto);
+  }
+
+  var api = {
+    VERSION: '1.0.0',
+    MS_SEGUNDO: MS_SEGUNDO, MS_MINUTO: MS_MINUTO, MS_HORA: MS_HORA, MS_DIA: MS_DIA,
+    UMBRAL_CRITICO: UMBRAL_CRITICO, UMBRAL_ATENCION: UMBRAL_ATENCION,
+    COLORES: COLORES,
+    ETIQUETAS_ESTADO: ETIQUETAS_ESTADO,
+    PLANTILLAS: PLANTILLAS,
+    crearId: crearId,
+    aDate: aDate,
+    enMs: enMs,
+    aValorInput: aValorInput,
+    desdeValorInput: desdeValorInput,
+    desglose: desglose,
+    formatearCuenta: formatearCuenta,
+    formatearHoras: formatearHoras,
+    formatearHorasOMinutos: formatearHorasOMinutos,
+    formatearFecha: formatearFecha,
+    frasePlazo: frasePlazo,
+    estadoHito: estadoHito,
+    ordenarHitos: ordenarHitos,
+    proximoHito: proximoHito,
+    hitoAnterior: hitoAnterior,
+    resumenProyecto: resumenProyecto,
+    progresoTramo: progresoTramo,
+    ordenarProyectos: ordenarProyectos,
+    proximoGlobal: proximoGlobal,
+    estadisticas: estadisticas,
+    alertasPendientes: alertasPendientes,
+    aplicarPlantilla: aplicarPlantilla,
+    normalizarHito: normalizarHito,
+    normalizarProyecto: normalizarProyecto,
+    normalizarDatos: normalizarDatos
+  };
+
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  global.RelojCore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>
+/*
+ * Reloj de Eventos — interfaz.
+ * Todo se guarda en este computador (localStorage). No hay servidor ni cuenta.
+ */
+(function () {
+  'use strict';
+
+  var C = window.RelojCore;
+  var CLAVE_DATOS = 'reloj-eventos:datos:v1';
+  var CLAVE_PREFS = 'reloj-eventos:prefs:v1';
+  var CLAVE_AVISOS = 'reloj-eventos:avisos:v1';
+
+  // En la app de escritorio los datos son archivos en una carpeta; en el navegador, localStorage.
+  var ARCHIVOS = (window.relojEscritorio && window.relojEscritorio.almacen) || null;
+
+  var $ = function (sel, raiz) { return (raiz || document).querySelector(sel); };
+  var $$ = function (sel, raiz) { return Array.prototype.slice.call((raiz || document).querySelectorAll(sel)); };
+
+  // --- Estado ---------------------------------------------------------------
+
+  var proyectos = [];
+  var prefs = { filtro: 'todos', tema: 'oscuro', alertas: false, abiertos: [] };
+  var avisosMostrados = {};
+  var busqueda = '';
+  var edicion = { id: null, color: C.COLORES[0] };
+  var ultimoDestacado = null;
+
+  function leerJSON(clave, porDefecto) {
+    try {
+      var bruto = localStorage.getItem(clave);
+      return bruto ? JSON.parse(bruto) : porDefecto;
+    } catch (e) {
+      console.warn('No se pudo leer', clave, e);
+      return porDefecto;
+    }
+  }
+
+  function guardarJSON(clave, valor) {
+    try {
+      localStorage.setItem(clave, JSON.stringify(valor));
+    } catch (e) {
+      console.warn('No se pudo guardar', clave, e);
+      avisar('No se pudo guardar', 'Revisa el espacio disponible del navegador.', 'vencido');
+    }
+  }
+
+  function aplicarPrefs(p) {
+    if (!p || typeof p !== 'object') return;
+    prefs.filtro = p.filtro || 'todos';
+    prefs.tema = p.tema === 'claro' ? 'claro' : 'oscuro';
+    prefs.alertas = !!p.alertas;
+    prefs.abiertos = Array.isArray(p.abiertos) ? p.abiertos : [];
+  }
+
+  function cargarTodo() {
+    // Qué avisos ya se mostraron es información de este equipo: siempre local.
+    avisosMostrados = leerJSON(CLAVE_AVISOS, {}) || {};
+
+    if (!ARCHIVOS) {
+      proyectos = C.normalizarDatos(leerJSON(CLAVE_DATOS, { proyectos: [] }));
+      aplicarPrefs(leerJSON(CLAVE_PREFS, null));
+      return Promise.resolve();
+    }
+
+    return Promise.all([ARCHIVOS.listar(), ARCHIVOS.leerPrefs()])
+      .then(function (resultado) {
+        proyectos = C.normalizarDatos(resultado[0]);
+        aplicarPrefs(resultado[1] || leerJSON(CLAVE_PREFS, null));
+        return trasladarDesdeNavegador();
+      })
+      .catch(function (e) {
+        console.error(e);
+        avisar('No se pudo leer la carpeta de datos', String((e && e.message) || e), 'vencido');
+      });
+  }
+
+  /** La primera vez que se abre la app de escritorio, rescata lo guardado en el navegador. */
+  function trasladarDesdeNavegador() {
+    if (proyectos.length) return Promise.resolve();
+    var previos = C.normalizarDatos(leerJSON(CLAVE_DATOS, { proyectos: [] }));
+    if (!previos.length) return Promise.resolve();
+    proyectos = previos;
+    return ARCHIVOS.guardarTodos(proyectos).then(function () {
+      avisar('Datos trasladados', previos.length + ' proyecto(s) ahora se guardan en la carpeta de datos.', 'ok');
+    });
+  }
+
+  function guardarDatos() {
+    if (ARCHIVOS) {
+      return ARCHIVOS.guardarTodos(proyectos).catch(function (e) {
+        console.error(e);
+        avisar('No se pudo guardar en la carpeta', String((e && e.message) || e), 'vencido');
+      });
+    }
+    guardarJSON(CLAVE_DATOS, { version: C.VERSION, actualizado: new Date().toISOString(), proyectos: proyectos });
+    return Promise.resolve();
+  }
+
+  function guardarPrefs() {
+    if (ARCHIVOS) return ARCHIVOS.guardarPrefs(prefs).catch(function (e) { console.error(e); });
+    guardarJSON(CLAVE_PREFS, prefs);
+    return Promise.resolve();
+  }
+
+  // --- Utilidades de interfaz ----------------------------------------------
+
+  function escapar(texto) {
+    return String(texto == null ? '' : texto)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function avisar(titulo, detalle, tipo) {
+    var caja = document.createElement('div');
+    caja.className = 'toast' + (tipo ? ' ' + tipo : '');
+    caja.innerHTML = '<strong>' + escapar(titulo) + '</strong>' +
+      (detalle ? '<span>' + escapar(detalle) + '</span>' : '');
+    $('#toasts').appendChild(caja);
+    setTimeout(function () {
+      caja.style.opacity = '0';
+      caja.style.transform = 'translateY(8px)';
+      setTimeout(function () { caja.remove(); }, 300);
+    }, 6000);
+  }
+
+  /** Muestra dónde están guardados los datos y ofrece abrir la carpeta. */
+  function pintarUbicacion() {
+    var caja = $('#pieUbicacion');
+    if (!ARCHIVOS) {
+      caja.innerHTML = 'Los datos se guardan solo en este computador. Usa <em>Exportar respaldo</em> para llevártelos.';
+      return;
+    }
+    ARCHIVOS.ruta().then(function (r) {
+      caja.textContent = 'Tus proyectos se guardan como archivos en ';
+      var ruta = document.createElement('code');
+      ruta.textContent = r.carpeta;
+      caja.appendChild(ruta);
+      var boton = document.createElement('button');
+      boton.id = 'btnCarpeta';
+      boton.className = 'btn sutil';
+      boton.textContent = 'Abrir carpeta';
+      boton.addEventListener('click', function () {
+        ARCHIVOS.abrirCarpeta().catch(function (e) { avisar('No se pudo abrir la carpeta', String(e.message || e), 'vencido'); });
+      });
+      caja.appendChild(boton);
+    });
+  }
+
+  function aplicarTema() {
+    document.documentElement.setAttribute('data-tema', prefs.tema === 'claro' ? 'claro' : 'oscuro');
+    $('#btnTema').textContent = prefs.tema === 'claro' ? '☾' : '◐';
+  }
+
+  // --- Filtros --------------------------------------------------------------
+
+  function coincideBusqueda(proyecto) {
+    if (!busqueda) return true;
+    var aguja = busqueda.toLowerCase();
+    if ((proyecto.nombre + ' ' + proyecto.descripcion).toLowerCase().indexOf(aguja) >= 0) return true;
+    return proyecto.hitos.some(function (h) {
+      return (h.nombre + ' ' + h.descripcion).toLowerCase().indexOf(aguja) >= 0;
+    });
+  }
+
+  function coincideFiltro(proyecto, ahora) {
+    var r = C.resumenProyecto(proyecto, ahora);
+    switch (prefs.filtro) {
+      case 'activos': return r.pendientes > 0;
+      case 'urgentes': return r.estado === 'critico' || r.estado === 'vencido';
+      case 'vencidos': return r.vencidos > 0;
+      case 'completados': return r.total > 0 && r.completados === r.total;
+      default: return true;
+    }
+  }
+
+  function visibles(ahora) {
+    return C.ordenarProyectos(proyectos.filter(function (p) {
+      return coincideBusqueda(p) && coincideFiltro(p, ahora);
+    }), ahora);
+  }
+
+  // --- Dibujado -------------------------------------------------------------
+
+  function plantillaPaso(hito, ahora) {
+    var estado = C.estadoHito(hito, ahora);
+    var tieneFecha = !!C.aDate(hito.fecha);
+    return '' +
+      '<li class="paso" data-estado="' + estado + '" data-hito="' + escapar(hito.id) + '">' +
+        '<button class="punto" data-accion="alternar" title="' +
+          (hito.completado ? 'Marcar como pendiente' : 'Marcar como cumplido') + '">✓</button>' +
+        '<div class="paso-datos">' +
+          '<h4>' + escapar(hito.nombre) +
+            ' <span class="insignia" data-estado="' + estado + '">' + C.ETIQUETAS_ESTADO[estado] + '</span>' +
+          '</h4>' +
+          '<div class="fecha">' + escapar(C.formatearFecha(hito.fecha)) + '</div>' +
+          (hito.descripcion ? '<p class="nota">' + escapar(hito.descripcion) + '</p>' : '') +
+        '</div>' +
+        (tieneFecha
+          ? '<div class="paso-reloj" data-fecha="' + escapar(hito.fecha) + '" data-completado="' + (hito.completado ? '1' : '') + '">' +
+              '<span class="cuenta" data-estado="' + estado + '"></span>' +
+              '<span class="horas"></span>' +
+            '</div>'
+          : '') +
+      '</li>';
+  }
+
+  function plantillaProyecto(proyecto, ahora) {
+    var r = C.resumenProyecto(proyecto, ahora);
+    var abierto = prefs.abiertos.indexOf(proyecto.id) >= 0;
+    var hitos = C.ordenarHitos(proyecto.hitos);
+    var completo = r.total > 0 && r.completados === r.total;
+
+    var lineaEstado = completo
+      ? 'Todos los pasos cumplidos 🎉'
+      : (r.proximo
+        ? r.completados + ' de ' + r.total + ' pasos cumplidos'
+        : (r.total ? r.total + ' pasos, ninguno con fecha pendiente' : 'Sin pasos todavía'));
+
+    var siguiente = r.proximo
+      ? '<div class="paso-actual">Siguiente: <strong>' + escapar(r.proximo.nombre) + '</strong> · ' +
+          escapar(C.formatearFecha(r.proximo.fecha)) + '</div>'
+      : '';
+
+    var reloj = r.proximo
+      ? '<div class="proyecto-reloj" data-fecha="' + escapar(r.proximo.fecha) + '" data-completado="">' +
+          '<span class="cuenta" data-estado="' + r.estado + '"></span>' +
+          '<span class="horas"></span>' +
+        '</div>'
+      : '<div class="proyecto-reloj"><span class="cuenta" data-estado="completado">—</span>' +
+        '<span class="horas">sin pasos pendientes</span></div>';
+
+    var avance = '<div class="avance"' +
+      (r.proximo ? ' data-progreso data-desde="' + escapar((r.anterior && r.anterior.fecha) || proyecto.creado || '') +
+        '" data-hasta="' + escapar(r.proximo.fecha) + '"' : '') + '>' +
+        '<div class="barra-tramo"><span style="width:' + Math.round(r.progreso * 100) + '%"></span></div>' +
+        '<small>' + r.completados + '/' + r.total + '</small>' +
+      '</div>';
+
+    return '' +
+      '<article class="proyecto' + (completo ? ' completo' : '') + (abierto ? ' abierto' : '') + '"' +
+        ' data-id="' + escapar(proyecto.id) + '" style="--color-proyecto:' + escapar(proyecto.color) + '">' +
+        '<div class="proyecto-cabecera" role="button" tabindex="0" aria-expanded="' + abierto + '">' +
+          '<span class="flecha" aria-hidden="true">▶</span>' +
+          '<div class="proyecto-titulo">' +
+            '<h3>' + escapar(proyecto.nombre) +
+              '<span class="insignia" data-estado="' + r.estado + '">' + C.ETIQUETAS_ESTADO[r.estado] + '</span>' +
+            '</h3>' +
+            '<p>' + escapar(lineaEstado) + '</p>' +
+            siguiente +
+          '</div>' +
+          avance +
+          reloj +
+        '</div>' +
+        '<div class="proyecto-cuerpo"' + (abierto ? '' : ' hidden') + '>' +
+          (proyecto.descripcion ? '<p class="proyecto-descripcion">' + escapar(proyecto.descripcion) + '</p>' : '') +
+          '<ul class="pasos">' + hitos.map(function (h) { return plantillaPaso(h, ahora); }).join('') + '</ul>' +
+          '<div class="proyecto-pie">' +
+            '<button class="btn sutil" data-accion="duplicar">Duplicar</button>' +
+            '<button class="btn sutil peligro" data-accion="eliminar">Eliminar</button>' +
+            '<button class="btn" data-accion="editar">Editar pasos y fechas</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+  }
+
+  function render() {
+    var ahora = Date.now();
+    var lista = visibles(ahora);
+    var contenedor = $('#lista');
+    contenedor.innerHTML = lista.map(function (p) { return plantillaProyecto(p, ahora); }).join('');
+
+    var hayProyectos = proyectos.length > 0;
+    $('#vacio').hidden = hayProyectos;
+    $('#resumen').hidden = !hayProyectos;
+    $('#destacado').hidden = !C.proximoGlobal(proyectos, ahora);
+
+    if (hayProyectos && !lista.length) {
+      contenedor.innerHTML = '<p class="vacio">Ningún proyecto coincide con la búsqueda o el filtro.</p>';
+    }
+    ultimoDestacado = null;
+    tick();
+  }
+
+  /** Cada segundo: solo se actualizan los números, no se rehace el HTML. */
+  function tick() {
+    var ahora = Date.now();
+    var d = new Date(ahora);
+    $('#horaActual').textContent = [d.getHours(), d.getMinutes(), d.getSeconds()]
+      .map(function (n) { return String(n).padStart(2, '0'); }).join(':');
+    $('#fechaActual').textContent = C.formatearFecha(d).replace(/,?\s*\d{1,2}:\d{2}.*$/, '');
+
+    $$('[data-fecha]').forEach(function (caja) {
+      var hito = { fecha: caja.dataset.fecha, completado: !!caja.dataset.completado };
+      var estado = C.estadoHito(hito, ahora);
+      var restante = C.enMs(C.aDate(hito.fecha)) - ahora;
+      var cuenta = $('.cuenta', caja);
+      var horas = $('.horas', caja);
+      if (cuenta) {
+        cuenta.textContent = hito.completado ? 'cumplido' : C.formatearCuenta(restante);
+        cuenta.dataset.estado = estado;
+      }
+      if (horas) {
+        horas.textContent = hito.completado
+          ? C.formatearFecha(hito.fecha)
+          : (restante < 0 ? 'hace ' + C.formatearHorasOMinutos(restante) : 'faltan ' + C.formatearHorasOMinutos(restante));
+      }
+      var fila = caja.closest('.paso') || caja.closest('.proyecto-cabecera');
+      if (fila) {
+        if (fila.classList.contains('paso')) fila.dataset.estado = estado;
+        var insignia = $('.insignia', fila);
+        if (insignia) {
+          insignia.dataset.estado = estado;
+          insignia.textContent = C.ETIQUETAS_ESTADO[estado];
+        }
+      }
+    });
+
+    $$('[data-progreso]').forEach(function (caja) {
+      var pct = C.progresoTramo(caja.dataset.desde, caja.dataset.hasta, ahora) * 100;
+      var barra = $('.barra-tramo span', caja);
+      if (barra) barra.style.width = Math.max(0, Math.min(100, pct)).toFixed(1) + '%';
+    });
+
+    pintarDestacado(ahora);
+    pintarResumen(ahora);
+    revisarAlertas(ahora);
+  }
+
+  function pintarDestacado(ahora) {
+    var mejor = C.proximoGlobal(proyectos, ahora);
+    var caja = $('#destacado');
+    if (!mejor) { caja.hidden = true; return; }
+    caja.hidden = false;
+
+    var estado = C.estadoHito(mejor.hito, ahora);
+    caja.dataset.estado = estado;
+    caja.style.setProperty('--color-proyecto', mejor.proyecto.color);
+
+    if (ultimoDestacado !== mejor.hito.id) {
+      ultimoDestacado = mejor.hito.id;
+      $('#destacadoHito').textContent = mejor.hito.nombre;
+      $('#destacadoProyecto').textContent = mejor.proyecto.nombre;
+      $('#destacadoFecha').textContent = C.formatearFecha(mejor.hito.fecha);
+    }
+    $('#destacadoCuenta').textContent = C.formatearCuenta(mejor.restanteMs);
+    $('#destacadoHoras').textContent = (mejor.restanteMs < 0 ? 'hace ' : 'faltan ') + C.formatearHorasOMinutos(mejor.restanteMs);
+    $('#destacadoFrase').textContent = C.frasePlazo(mejor.restanteMs);
+    var pct = C.progresoTramo(mejor.anterior && mejor.anterior.fecha, mejor.hito.fecha, ahora) * 100;
+    $('#destacadoBarra').style.width = Math.max(0, Math.min(100, pct)).toFixed(1) + '%';
+  }
+
+  function pintarResumen(ahora) {
+    var s = C.estadisticas(proyectos, ahora);
+    $('#statProyectos').textContent = s.proyectos;
+    $('#statPendientes').textContent = s.pendientes;
+    $('#statCriticos').textContent = s.criticos;
+    $('#statVencidos').textContent = s.vencidos;
+  }
+
+  // --- Avisos ---------------------------------------------------------------
+
+  var ultimaRevision = 0;
+  function revisarAlertas(ahora) {
+    if (!prefs.alertas) return;
+    if (ahora - ultimaRevision < 5000) return;
+    ultimaRevision = ahora;
+
+    C.alertasPendientes(proyectos, ahora).forEach(function (aviso) {
+      if (avisosMostrados[aviso.clave]) return;
+      avisosMostrados[aviso.clave] = ahora;
+      var titulo = aviso.proyecto.nombre;
+      var texto = aviso.hito.nombre + ' — ' + C.frasePlazo(aviso.restanteMs);
+      avisar(titulo, texto, aviso.restanteMs < 0 ? 'vencido' : 'critico');
+      try {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          new Notification('⏳ ' + titulo, { body: texto, tag: aviso.clave });
+        }
+      } catch (e) { /* algunos navegadores lo bloquean en file:// */ }
+    });
+    guardarJSON(CLAVE_AVISOS, avisosMostrados);
+  }
+
+  function alternarAlertas() {
+    if (prefs.alertas) {
+      prefs.alertas = false;
+      guardarPrefs();
+      pintarBotonAlertas();
+      avisar('Avisos desactivados', 'Ya no verás notificaciones automáticas.');
+      return;
+    }
+    var activar = function () {
+      prefs.alertas = true;
+      guardarPrefs();
+      pintarBotonAlertas();
+      avisar('Avisos activados', 'Te avisaré 24 h antes, 1 h antes y al vencer cada paso.', 'ok');
+    };
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      Notification.requestPermission().then(activar).catch(activar);
+    } else {
+      activar();
+    }
+  }
+
+  function pintarBotonAlertas() {
+    var b = $('#btnAlertas');
+    b.classList.toggle('activo', prefs.alertas);
+    b.title = prefs.alertas ? 'Avisos activados (clic para desactivar)' : 'Activar avisos de escritorio';
+    b.setAttribute('aria-pressed', String(prefs.alertas));
+  }
+
+  // --- Editor de proyecto ---------------------------------------------------
+
+  function filaPaso(hito) {
+    var fila = document.createElement('div');
+    fila.className = 'paso-editor';
+    fila.dataset.id = (hito && hito.id) || '';
+    fila.dataset.completado = hito && hito.completado ? '1' : '';
+    fila.innerHTML = '' +
+      '<input type="text" class="p-nombre" maxlength="140" placeholder="Nombre del paso (ej: Cierre de ofertas)">' +
+      '<input type="datetime-local" class="p-fecha">' +
+      '<button type="button" class="quitar" title="Quitar este paso">✕</button>' +
+      '<textarea class="p-desc" rows="1" maxlength="400" placeholder="Descripción del paso (opcional)"></textarea>';
+    $('.p-nombre', fila).value = (hito && hito.nombre) || '';
+    $('.p-fecha', fila).value = hito ? C.aValorInput(hito.fecha) : '';
+    $('.p-desc', fila).value = (hito && hito.descripcion) || '';
+    $('.quitar', fila).addEventListener('click', function () {
+      fila.remove();
+      if (!$$('.paso-editor', $('#listaPasos')).length) agregarFilaPaso();
+    });
+    return fila;
+  }
+
+  function agregarFilaPaso(hito) {
+    var fila = filaPaso(hito);
+    $('#listaPasos').appendChild(fila);
+    if (!hito) $('.p-nombre', fila).focus();
+    return fila;
+  }
+
+  function pintarColores() {
+    var caja = $('#campoColores');
+    caja.innerHTML = C.COLORES.map(function (color) {
+      return '<button type="button" style="background:' + color + '" data-color="' + color + '"' +
+        ' aria-pressed="' + (color === edicion.color) + '" aria-label="Color ' + color + '"></button>';
+    }).join('');
+  }
+
+  function abrirEditor(proyecto) {
+    edicion.id = proyecto ? proyecto.id : null;
+    edicion.color = proyecto ? proyecto.color : C.COLORES[Math.floor(Math.random() * C.COLORES.length)];
+    $('#modalTitulo').textContent = proyecto ? 'Editar proyecto' : 'Nuevo proyecto';
+    $('#campoNombre').value = proyecto ? proyecto.nombre : '';
+    $('#campoDescripcion').value = proyecto ? proyecto.descripcion : '';
+    $('#errorForm').hidden = true;
+    pintarColores();
+
+    $('#listaPasos').innerHTML = '';
+    if (proyecto && proyecto.hitos.length) {
+      C.ordenarHitos(proyecto.hitos).forEach(function (h) { agregarFilaPaso(h); });
+    } else {
+      agregarFilaPaso();
+    }
+    $('#modalProyecto').showModal();
+    setTimeout(function () { $('#campoNombre').focus(); }, 30);
+  }
+
+  function leerEditor() {
+    var nombre = $('#campoNombre').value.trim();
+    if (!nombre) return { error: 'Ponle un nombre al proyecto.' };
+
+    var hitos = [];
+    var incompleto = false;
+    $$('.paso-editor', $('#listaPasos')).forEach(function (fila) {
+      var nom = $('.p-nombre', fila).value.trim();
+      var fecha = $('.p-fecha', fila).value;
+      var desc = $('.p-desc', fila).value.trim();
+      if (!nom && !fecha && !desc) return;
+      if (!nom || !fecha) { incompleto = true; return; }
+      hitos.push(C.normalizarHito({
+        id: fila.dataset.id || undefined,
+        nombre: nom,
+        descripcion: desc,
+        fecha: C.desdeValorInput(fecha),
+        completado: !!fila.dataset.completado
+      }));
+    });
+
+    if (incompleto) return { error: 'Cada paso necesita nombre y fecha. Completa los que falten o quítalos.' };
+    if (!hitos.length) return { error: 'Agrega al menos un paso con su fecha y hora.' };
+
+    return {
+      proyecto: C.normalizarProyecto({
+        id: edicion.id || undefined,
+        nombre: nombre,
+        descripcion: $('#campoDescripcion').value.trim(),
+        color: edicion.color,
+        creado: edicion.id ? (buscarProyecto(edicion.id) || {}).creado : undefined,
+        hitos: hitos
+      })
+    };
+  }
+
+  function buscarProyecto(id) {
+    for (var i = 0; i < proyectos.length; i++) if (proyectos[i].id === id) return proyectos[i];
+    return null;
+  }
+
+  function guardarProyecto(proyecto) {
+    var indice = proyectos.findIndex(function (p) { return p.id === proyecto.id; });
+    if (indice >= 0) proyectos[indice] = proyecto;
+    else proyectos.push(proyecto);
+    guardarDatos();
+    render();
+  }
+
+  // --- Plantillas -----------------------------------------------------------
+
+  function abrirPlantillas() {
+    $('#campoFechaBase').value = C.aValorInput(new Date());
+    $('#listaPlantillas').innerHTML = C.PLANTILLAS.map(function (pl) {
+      return '<button type="button" class="plantilla" data-plantilla="' + pl.id + '"' +
+        ' style="--color-plantilla:' + pl.color + '">' +
+        '<strong>' + escapar(pl.nombre) + '</strong>' +
+        '<span>' + escapar(pl.descripcion) + '</span>' +
+        '<ol>' + pl.hitos.map(function (h) { return '<li>' + escapar(h.nombre) + '</li>'; }).join('') + '</ol>' +
+      '</button>';
+    }).join('');
+    $('#modalPlantilla').showModal();
+  }
+
+  function usarPlantilla(id) {
+    var pl = C.PLANTILLAS.filter(function (p) { return p.id === id; })[0];
+    if (!pl) return;
+    var base = C.aDate(C.desdeValorInput($('#campoFechaBase').value)) || new Date();
+    $('#modalPlantilla').close();
+    abrirEditor(C.aplicarPlantilla(pl, base));
+    edicion.id = null; // la plantilla crea un proyecto nuevo
+  }
+
+  // --- Respaldo -------------------------------------------------------------
+
+  function exportar() {
+    if (!proyectos.length) { avisar('No hay nada que exportar'); return; }
+    var datos = { app: 'Reloj de Eventos', version: C.VERSION, exportado: new Date().toISOString(), proyectos: proyectos };
+    var blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'reloj-eventos-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    avisar('Respaldo generado', a.download, 'ok');
+  }
+
+  function importar(archivo) {
+    var lector = new FileReader();
+    lector.onload = function () {
+      try {
+        var entrantes = C.normalizarDatos(JSON.parse(String(lector.result)));
+        if (!entrantes.length) { avisar('El archivo no tiene proyectos'); return; }
+        var nuevos = 0, actualizados = 0;
+        entrantes.forEach(function (p) {
+          var i = proyectos.findIndex(function (x) { return x.id === p.id; });
+          if (i >= 0) { proyectos[i] = p; actualizados++; } else { proyectos.push(p); nuevos++; }
+        });
+        guardarDatos();
+        render();
+        avisar('Respaldo importado', nuevos + ' nuevos, ' + actualizados + ' actualizados', 'ok');
+      } catch (e) {
+        avisar('No se pudo leer el archivo', 'Debe ser un respaldo .json de esta app.', 'vencido');
+      }
+    };
+    lector.readAsText(archivo);
+  }
+
+  function cargarEjemplo() {
+    var ahora = new Date();
+    var hace2dias = new Date(ahora.getTime() - 2 * C.MS_DIA);
+    var licitacion = C.aplicarPlantilla(C.PLANTILLAS[0], hace2dias);
+    licitacion.nombre = 'Licitación 1234-56-LE26 — Servicio de soporte';
+    licitacion.descripcion = 'Ejemplo: licitación publicada hace 2 días en Mercado Público.';
+    licitacion.hitos[0].completado = true;
+
+    var cumple = C.normalizarProyecto({
+      nombre: 'Cumpleaños de mamá',
+      descripcion: 'Ejemplo de evento simple.',
+      color: '#f472b6',
+      hitos: [
+        { nombre: 'Comprar el regalo', fecha: new Date(ahora.getTime() + 5 * C.MS_DIA).toISOString(), descripcion: '' },
+        { nombre: '¡Cumpleaños!', fecha: new Date(ahora.getTime() + 12 * C.MS_DIA).toISOString(), descripcion: 'Almuerzo familiar a las 13:00.' }
+      ]
+    });
+
+    proyectos = proyectos.concat([licitacion, cumple]);
+    prefs.abiertos = [licitacion.id];
+    guardarDatos();
+    guardarPrefs();
+    render();
+    avisar('Ejemplo cargado', 'Puedes editarlo o borrarlo cuando quieras.', 'ok');
+  }
+
+  function borrarTodo() {
+    if (!confirm('¿Borrar todos los proyectos de este computador? Esta acción no se puede deshacer.')) return;
+    proyectos = [];
+    avisosMostrados = {};
+    prefs.abiertos = [];
+    guardarDatos();
+    guardarPrefs();
+    guardarJSON(CLAVE_AVISOS, avisosMostrados);
+    render();
+    avisar('Todo borrado');
+  }
+
+  // --- Eventos --------------------------------------------------------------
+
+  function alternarProyecto(tarjeta) {
+    var id = tarjeta.dataset.id;
+    var cuerpo = $('.proyecto-cuerpo', tarjeta);
+    var abierto = !cuerpo.hidden;
+    cuerpo.hidden = abierto;
+    tarjeta.classList.toggle('abierto', !abierto);
+    $('.proyecto-cabecera', tarjeta).setAttribute('aria-expanded', String(!abierto));
+    prefs.abiertos = prefs.abiertos.filter(function (x) { return x !== id; });
+    if (!abierto) prefs.abiertos.push(id);
+    guardarPrefs();
+  }
+
+  function conectar() {
+    $('#btnNuevo').addEventListener('click', function () { abrirEditor(null); });
+    $('#btnPlantilla').addEventListener('click', abrirPlantillas);
+    $('#btnAlertas').addEventListener('click', alternarAlertas);
+    $('#btnTema').addEventListener('click', function () {
+      prefs.tema = prefs.tema === 'claro' ? 'oscuro' : 'claro';
+      guardarPrefs();
+      aplicarTema();
+    });
+
+    var menu = $('#menuMas');
+    $('#btnMas').addEventListener('click', function (e) {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+      $('#btnMas').setAttribute('aria-expanded', String(!menu.hidden));
+    });
+    document.addEventListener('click', function () { menu.hidden = true; });
+    menu.addEventListener('click', function (e) {
+      var boton = e.target.closest('[data-accion]');
+      if (!boton) return;
+      menu.hidden = true;
+      ejecutarAccion(boton.dataset.accion);
+    });
+
+    $('#vacio').addEventListener('click', function (e) {
+      var boton = e.target.closest('[data-accion]');
+      if (boton) ejecutarAccion(boton.dataset.accion);
+    });
+
+    $('#busqueda').addEventListener('input', function (e) {
+      busqueda = e.target.value.trim();
+      render();
+    });
+
+    $('#filtros').addEventListener('click', function (e) {
+      var chip = e.target.closest('.chip');
+      if (!chip) return;
+      prefs.filtro = chip.dataset.filtro;
+      guardarPrefs();
+      $$('.chip', $('#filtros')).forEach(function (c) { c.classList.toggle('activo', c === chip); });
+      render();
+    });
+
+    $('#lista').addEventListener('click', function (e) {
+      var tarjeta = e.target.closest('.proyecto');
+      if (!tarjeta) return;
+      var proyecto = buscarProyecto(tarjeta.dataset.id);
+      if (!proyecto) return;
+
+      var punto = e.target.closest('[data-accion="alternar"]');
+      if (punto) {
+        var idHito = punto.closest('.paso').dataset.hito;
+        proyecto.hitos.forEach(function (h) { if (h.id === idHito) h.completado = !h.completado; });
+        guardarDatos();
+        render();
+        return;
+      }
+
+      var accion = e.target.closest('[data-accion]');
+      if (accion) {
+        if (accion.dataset.accion === 'editar') abrirEditor(proyecto);
+        if (accion.dataset.accion === 'duplicar') {
+          var copia = C.normalizarProyecto({
+            nombre: proyecto.nombre + ' (copia)',
+            descripcion: proyecto.descripcion,
+            color: proyecto.color,
+            hitos: proyecto.hitos.map(function (h) {
+              return { nombre: h.nombre, descripcion: h.descripcion, fecha: h.fecha, completado: false };
+            })
+          });
+          proyectos.push(copia);
+          guardarDatos();
+          render();
+          avisar('Proyecto duplicado', copia.nombre, 'ok');
+        }
+        if (accion.dataset.accion === 'eliminar') {
+          if (confirm('¿Eliminar "' + proyecto.nombre + '" y todos sus pasos?')) {
+            proyectos = proyectos.filter(function (p) { return p.id !== proyecto.id; });
+            guardarDatos();
+            render();
+            avisar('Proyecto eliminado', proyecto.nombre);
+          }
+        }
+        return;
+      }
+
+      if (e.target.closest('.proyecto-cabecera')) alternarProyecto(tarjeta);
+    });
+
+    $('#lista').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var cabecera = e.target.closest('.proyecto-cabecera');
+      if (!cabecera) return;
+      e.preventDefault();
+      alternarProyecto(cabecera.closest('.proyecto'));
+    });
+
+    $('#btnAgregarPaso').addEventListener('click', function () { agregarFilaPaso(); });
+
+    $('#campoColores').addEventListener('click', function (e) {
+      var boton = e.target.closest('[data-color]');
+      if (!boton) return;
+      edicion.color = boton.dataset.color;
+      pintarColores();
+    });
+
+    $('#formProyecto').addEventListener('submit', function (e) {
+      var resultado = leerEditor();
+      if (resultado.error) {
+        e.preventDefault();
+        var caja = $('#errorForm');
+        caja.textContent = resultado.error;
+        caja.hidden = false;
+        return;
+      }
+      guardarProyecto(resultado.proyecto);
+      avisar('Proyecto guardado', resultado.proyecto.nombre + ' · ' + resultado.proyecto.hitos.length + ' pasos', 'ok');
+    });
+
+    $('#listaPlantillas').addEventListener('click', function (e) {
+      var boton = e.target.closest('[data-plantilla]');
+      if (boton) usarPlantilla(boton.dataset.plantilla);
+    });
+
+    $$('[data-cerrar]').forEach(function (boton) {
+      boton.addEventListener('click', function () { boton.closest('dialog').close(); });
+    });
+
+    $('#archivoImportar').addEventListener('change', function (e) {
+      if (e.target.files && e.target.files[0]) importar(e.target.files[0]);
+      e.target.value = '';
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        abrirEditor(null);
+      }
+    });
+  }
+
+  function ejecutarAccion(accion) {
+    if (accion === 'nuevo') abrirEditor(null);
+    if (accion === 'plantillas') abrirPlantillas();
+    if (accion === 'exportar') exportar();
+    if (accion === 'importar') $('#archivoImportar').click();
+    if (accion === 'ejemplo') cargarEjemplo();
+    if (accion === 'borrar') borrarTodo();
+  }
+
+  // --- Arranque -------------------------------------------------------------
+
+  function iniciar() {
+    conectar();
+    $('#pieVersion').textContent = 'Reloj de Eventos v' + C.VERSION +
+      (window.relojEscritorio ? ' · app de escritorio' : '');
+    cargarTodo().then(function () {
+      aplicarTema();
+      pintarBotonAlertas();
+      pintarUbicacion();
+      $$('.chip', $('#filtros')).forEach(function (c) {
+        c.classList.toggle('activo', c.dataset.filtro === prefs.filtro);
+      });
+      render();
+      setInterval(tick, 1000);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+})();
+
+</script>
+</body>
+</html>

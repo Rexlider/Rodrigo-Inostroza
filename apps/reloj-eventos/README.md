@@ -10,6 +10,34 @@ apertura → adjudicación. También sirve para un cumpleaños, un trámite o la
 
 ![Pantalla principal del Reloj de Eventos](docs/captura.png)
 
+## Bajarlo a tu computador (Windows)
+
+**Lo más rápido — un solo archivo, sin instalar nada:**
+
+1. Abre [`Reloj-de-Eventos.html`](https://github.com/Rexlider/Rodrigo-Inostroza/blob/claude/bold-brown-m0at4h/apps/reloj-eventos/Reloj-de-Eventos.html) en GitHub.
+2. Arriba a la derecha, botón **Download raw file** (la flecha ⬇).
+3. Guárdalo donde quieras, por ejemplo en `C:\Users\Ignacio\Desktop\app\`.
+4. **Doble clic** y listo: el programa se abre.
+
+Ese archivo lleva todo adentro (interfaz, estilos y código); se abre en tu navegador pero funciona
+igual y sin internet.
+
+**Con todo el proyecto (para la ventana propia y el instalador):**
+
+1. Descarga el proyecto completo:
+   [bajar ZIP](https://github.com/Rexlider/Rodrigo-Inostroza/archive/refs/heads/claude/bold-brown-m0at4h.zip)
+2. Clic derecho → **Extraer todo**, por ejemplo en el Escritorio.
+3. Entra a la carpeta `apps\reloj-eventos`. Ahí tienes tres archivos para hacer doble clic:
+
+| Archivo | Para qué sirve | Necesita |
+|---|---|---|
+| `ABRIR-RELOJ.bat` | Abrir el programa al toque | nada |
+| `INSTALAR-APP-ESCRITORIO.bat` | Dejarlo como app con ventana propia y avisos de Windows | [Node.js](https://nodejs.org) |
+| `CREAR-INSTALADOR-WINDOWS.bat` | Generar el `.exe` instalable | [Node.js](https://nodejs.org) |
+
+> La versión de un solo archivo guarda tus datos en el navegador. La app de escritorio los guarda
+> como archivos en `datos/`, y la primera vez que la abras se trae solo lo que tuvieras del navegador.
+
 ## Qué hace
 
 - **Cuenta regresiva en vivo**, actualizada cada segundo: `7d 23:59:53` y también las **horas totales** (`faltan 192 h`).
@@ -29,7 +57,13 @@ apertura → adjudicación. También sirve para un cumpleaños, un trámite o la
 
 ### Opción 1 — Probarla al toque (sin instalar nada)
 
-Abre `src/index.html` con doble clic. Se ve y funciona igual, dentro del navegador.
+Doble clic en `Reloj-de-Eventos.html` (o en `ABRIR-RELOJ.bat`). Se abre en el navegador y funciona igual.
+
+Ese archivo se arma solo a partir de `src/`, con:
+
+```bash
+npm run portable
+```
 
 ### Opción 2 — Como app de escritorio (ventana propia, avisos del sistema)
 
@@ -119,6 +153,10 @@ apps/reloj-eventos/
 ├── test/
 │   ├── core.test.js       pruebas de la lógica de fechas
 │   └── almacen.test.js    pruebas del guardado en archivos
+├── herramientas/
+│   └── construir-portable.js   arma el Reloj-de-Eventos.html de un solo archivo
+├── Reloj-de-Eventos.html       versión de un archivo, para abrir con doble clic
+├── ABRIR-RELOJ.bat             lanzadores para Windows
 ├── datos/                 tus proyectos (se crea al usar la app, fuera del repositorio)
 └── docs/captura.png
 ```
@@ -131,10 +169,11 @@ apps/reloj-eventos/
 npm test
 ```
 
-34 pruebas. Sobre la lógica de fechas: formato de cuenta regresiva y de horas, estados según lo que falta,
+37 pruebas. Sobre la lógica de fechas: formato de cuenta regresiva y de horas, estados según lo que falta,
 orden de los pasos, resumen y avance de cada proyecto, escalones de aviso, plantillas y respaldos. Sobre el
 guardado en archivos: crear la carpeta, un archivo por proyecto, renombrar sin duplicar, eliminar,
-preferencias aparte y no tocar archivos dañados.
+preferencias aparte y no tocar archivos dañados. Y sobre la versión de un solo archivo: que esté al día
+con `src/` y que el código no se corrompa al incrustarlo.
 
 ## Licencia
 

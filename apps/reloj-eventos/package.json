@@ -10,9 +10,17 @@
     "dist": "electron-builder",
     "dist:win": "electron-builder --win",
     "dist:mac": "electron-builder --mac",
-    "dist:linux": "electron-builder --linux"
+    "dist:linux": "electron-builder --linux",
+    "portable": "node herramientas/construir-portable.js"
   },
-  "keywords": ["reloj", "cuenta regresiva", "countdown", "plazos", "licitaciones", "electron"],
+  "keywords": [
+    "reloj",
+    "cuenta regresiva",
+    "countdown",
+    "plazos",
+    "licitaciones",
+    "electron"
+  ],
   "author": "Rodrigo Inostroza",
   "license": "MIT",
   "devDependencies": {
@@ -22,9 +30,29 @@
   "build": {
     "appId": "cl.rodrigoinostroza.relojeventos",
     "productName": "Reloj de Eventos",
-    "files": ["electron/**/*", "src/**/*", "package.json"],
-    "win": { "target": ["nsis", "portable"] },
-    "mac": { "target": ["dmg"], "category": "public.app-category.productivity" },
-    "linux": { "target": ["AppImage"], "category": "Utility" }
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "package.json",
+      "!datos/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility"
+    }
   }
 }
