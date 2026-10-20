@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casacake · Bases horneadas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Tacitas, tartaletas, cachitos y hojarasca horneadas, listas para rellenar. Venta en línea y a banqueteras, pastelerías y distribuidores.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: página clara tipo merengue; bandejas vistas desde arriba como imagen de producto, frambuesa solo en acciones */
+:root{
+  --bg:#FFF9F7; --surface:#FFFFFF; --ink:#2C1714; --muted:#76605B; --line:#F0DDD7;
+  --berry:#C3345A; --berry-ink:#FFFFFF; --berry-soft:#FBE6EC;
+  --crust:#E2A851; --crust-d:#B87A2C; --crust-l:#F1CF8E; --manjar:#9A5A24; --cocoa:#4A2A22; --meringue:#FFF6EE;
+  --tray:#F6E8E2; --tray-edge:#E7D2CA; --herb:#5E8C4A;
+  --tbd:#A9581A; --tbd-bg:#FDF0E2;
+  --f-display:"Bricolage Grotesque","Avenir Next","Trebuchet MS",sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#170F0E; --surface:#221816; --ink:#F6E9E5; --muted:#B9A19B; --line:#3A2925;
+  --berry:#EE6B8B; --berry-ink:#2A0F16; --berry-soft:#3A1B23;
+  --crust:#DDA24C; --crust-d:#A86F27; --crust-l:#EAC683; --manjar:#B4733A; --cocoa:#3A211B; --meringue:#FBEFE6;
+  --tray:#2E211E; --tray-edge:#43302B; --herb:#7DAE66;
+  --tbd:#EBA466; --tbd-bg:#2C1F15; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#170F0E; --surface:#221816; --ink:#F6E9E5; --muted:#B9A19B; --line:#3A2925;
+  --berry:#EE6B8B; --berry-ink:#2A0F16; --berry-soft:#3A1B23;
+  --crust:#DDA24C; --crust-d:#A86F27; --crust-l:#EAC683; --manjar:#B4733A; --cocoa:#3A211B; --meringue:#FBEFE6;
+  --tray:#2E211E; --tray-edge:#43302B; --herb:#7DAE66;
+  --tbd:#EBA466; --tbd-bg:#2C1F15; color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);line-height:1.04;text-wrap:balance;margin:0;letter-spacing:-.015em}
+h2{font-size:clamp(2rem,4.6vw,3.1rem);font-weight:800}
+h3{font-size:1.2rem;font-weight:700;letter-spacing:-.005em}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--berry);outline-offset:2px}
+.wrap{max-width:1180px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font:500 .76rem/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--berry)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tbd{border:1.5px dashed var(--tbd);background:var(--tbd-bg);color:var(--tbd);border-radius:4px;padding:.05em .4em;font-size:.86em;overflow-wrap:anywhere;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+.btn{appearance:none;border:0;cursor:pointer;font:600 .95rem/1 var(--f-body);padding:.9em 1.3em;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;gap:.5em;text-decoration:none;transition:transform .12s,background .15s}
+.btn:active{transform:translateY(1px)}
+.btn-berry{background:var(--berry);color:var(--berry-ink)}
+.btn-berry:hover{background:color-mix(in oklab,var(--berry) 88%,var(--ink))}
+.btn-ink{background:var(--ink);color:var(--bg)}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+.mock{background:var(--tbd-bg);border-bottom:1px solid var(--line);font-size:.86rem}
+.mock .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;padding-block:8px}
+.mock button{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;text-decoration:underline}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in oklab,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;min-height:66px}
+.brand{text-decoration:none;margin-right:auto;font:800 1.75rem/1 var(--f-display);letter-spacing:-.04em}
+.brand i{font-style:normal;color:var(--berry)}
+.nav{display:flex;gap:22px}
+.nav a{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.cart-btn{background:var(--ink);color:var(--bg);border:0;border-radius:99px;padding:.6em 1em;font:600 .92rem/1 var(--f-body);cursor:pointer;display:flex;gap:.5em;align-items:center}
+.cart-btn .count{font-family:var(--f-mono);background:var(--berry);color:var(--berry-ink);border-radius:99px;min-width:1.5em;padding:.15em .4em;font-size:.8rem;text-align:center}
+@media (max-width:880px){.nav{display:none}}
+
+.hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding-block:64px 56px}
+.hero h1{font-size:clamp(3rem,7.6vw,5.8rem);font-weight:800;letter-spacing:-.045em;line-height:.92}
+.hero h1 span{color:var(--berry)}
+.hero .lede{max-width:44ch;color:var(--muted);font-size:1.15rem;margin-top:22px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero .lider{margin-top:28px;display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--muted)}
+.hero .lider a{color:var(--ink);font-weight:600}
+.hero-art svg{width:100%;height:auto;max-width:560px;display:block;margin-inline:auto}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr;padding-block:40px}}
+
+.facts{border-block:1px solid var(--line);background:var(--surface)}
+.facts ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr)}
+.facts li{padding:18px 18px 18px 0;display:grid;gap:2px}
+.facts li+li{padding-left:18px;border-left:1px solid var(--line)}
+.facts strong{font:700 1.08rem/1.2 var(--f-display)}
+.facts span{color:var(--muted);font-size:.88rem}
+@media (max-width:760px){.facts ul{grid-template-columns:1fr 1fr}.facts li:nth-child(3){padding-left:0;border-left:0}.facts li:nth-child(n+3){border-top:1px solid var(--line)}}
+
+section{padding-block:76px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:28px}
+.sec-head p{color:var(--muted);max-width:50ch}
+.sec-head h2{margin-top:8px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:.45em 1em;font:500 .9rem/1 var(--f-body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.prod{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.prod-art{background:var(--bg);padding:14px 14px 4px;position:relative}
+.prod-art svg{width:100%;height:auto;display:block}
+.badge{position:absolute;top:12px;left:12px;font:500 .72rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:.45em .7em;border-radius:99px}
+.badge.out{background:var(--muted)}
+.prod-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+.pack{font:400 .82rem/1.3 var(--f-mono);color:var(--muted)}
+.prod-desc{color:var(--muted);font-size:.93rem}
+.price-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:10px;border-top:1px solid var(--line)}
+.price{font:800 1.55rem/1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.per{font:400 .8rem/1 var(--f-mono);color:var(--muted)}
+.buy{display:flex;gap:10px;align-items:stretch}
+.stepper{display:inline-flex;border:1.5px solid var(--line);border-radius:99px;overflow:hidden;background:var(--bg)}
+.stepper button{width:38px;border:0;background:transparent;color:var(--ink);font-size:1.15rem;cursor:pointer}
+.stepper button:hover{background:var(--line)}
+.stepper input{width:40px;border:0;background:transparent;color:var(--ink);text-align:center;font:500 1rem var(--f-mono);-moz-appearance:textfield}
+.stepper input::-webkit-inner-spin-button{appearance:none}
+.buy .btn{flex:1}
+
+/* calculadora */
+.calc{background:var(--surface);border-block:1px solid var(--line)}
+.calc-box{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;align-items:start}
+.calc-in{display:grid;gap:18px;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:22px}
+.calc-in .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.calc-out{min-width:0}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .74rem/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tfoot td{font-weight:700;border-bottom:0;font-size:1.05rem}
+.calc-note{font-size:.84rem;color:var(--muted);margin-top:12px}
+.calc-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+@media (max-width:900px){.calc-box{grid-template-columns:minmax(0,1fr)}}
+
+.field{display:grid;gap:6px;min-width:0}
+.field label,.field legend{font-size:.85rem;font-weight:600}
+.field input,.field select,.field textarea{width:100%;font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:.65em .75em}
+.field textarea{min-height:92px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink);outline:none}
+fieldset.field{border:0;padding:0;margin:0}
+.field input[type=checkbox],.field input[type=radio]{width:auto;flex:none;padding:0}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:inline-flex;gap:6px;align-items:center;border:1.5px solid var(--line);border-radius:99px;padding:.4em .8em;font-weight:500;font-size:.9rem;cursor:pointer;background:var(--surface)}
+.checks label:has(input:checked){border-color:var(--berry);background:var(--berry-soft)}
+.checks input{accent-color:var(--berry)}
+
+/* ideas */
+.ideas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.idea{display:grid;gap:10px;align-content:start}
+.idea svg{width:100%;height:auto;max-width:150px}
+.idea p{color:var(--muted);font-size:.93rem}
+@media (max-width:900px){.ideas{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.ideas{grid-template-columns:1fr}}
+
+/* mayoristas */
+.b2b{background:var(--ink);color:var(--bg)}
+.b2b .wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;align-items:start}
+.b2b .eyebrow{color:var(--berry)}
+.b2b .side p{color:color-mix(in oklab,var(--bg) 72%,var(--ink));margin-top:16px;max-width:44ch}
+.who{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.who span{border:1px solid color-mix(in oklab,var(--bg) 30%,var(--ink));border-radius:99px;padding:.35em .8em;font-size:.88rem}
+.form{background:var(--bg);color:var(--ink);border-radius:18px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form .full{grid-column:1/-1}
+.form .actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.note{font-size:.84rem;color:var(--tbd)}
+.sent{grid-column:1/-1;display:grid;gap:12px}
+.copybox{font:400 .85rem/1.5 var(--f-mono);white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;max-height:240px;overflow:auto;margin:0}
+@media (max-width:900px){.b2b .wrap{grid-template-columns:1fr}}
+@media (max-width:560px){.form{grid-template-columns:1fr;padding:20px}}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.about p{margin-top:16px;color:var(--muted);max-width:56ch}
+.faq details{border-bottom:1px solid var(--line);padding:16px 0}
+.faq details:first-of-type{border-top:1px solid var(--line)}
+.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::after{content:"+";font:500 1.3rem/1 var(--f-mono);color:var(--berry)}
+.faq details[open] summary::after{content:"−"}
+.faq details p{color:var(--muted);margin-top:10px;max-width:60ch}
+
+footer{border-top:1px solid var(--line);background:var(--surface);font-size:.92rem;color:var(--muted)}
+footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px;padding-block:48px}
+footer h4{margin:0 0 10px;color:var(--ink);font:700 1rem/1 var(--f-display)}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:18px;font-size:.8rem}
+@media (max-width:760px){footer .wrap{grid-template-columns:1fr}}
+
+.wa{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;background:#1FA855;color:#fff;border-radius:99px;padding:.8em 1.1em;font-weight:600;text-decoration:none;display:flex;gap:.5em;align-items:center;box-shadow:0 8px 20px rgb(0 0 0 / .22)}
+.wa svg{width:20px;height:20px}
+
+dialog.drawer{margin:0 0 0 auto;height:100%;max-height:100%;width:min(440px,100%);max-width:100%;border:0;padding:0;background:var(--surface);color:var(--ink);box-shadow:-20px 0 40px rgb(0 0 0 / .2)}
+dialog.drawer::backdrop{background:rgb(30 12 10 / .45)}
+.drawer-in{display:flex;flex-direction:column;height:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.drawer-head h3{font-size:1.5rem;font-weight:800}
+.x{background:none;border:0;color:var(--ink);font-size:1.6rem;cursor:pointer;line-height:1;padding:4px 8px}
+.drawer-body{flex:1;overflow:auto;padding:16px 20px;display:grid;gap:14px;align-content:start}
+.drawer-foot{border-top:1px solid var(--line);padding:16px 20px;display:grid;gap:12px}
+.line{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.line svg{width:64px;height:auto;border-radius:8px}
+.line b{display:block;font-size:.95rem;line-height:1.3}
+.line small{color:var(--muted);font-family:var(--f-mono);font-size:.78rem}
+.line .stepper button{width:28px}
+.line .stepper input{width:34px;font-size:.9rem}
+.line .rm{background:none;border:0;color:var(--muted);font-size:.8rem;text-decoration:underline;cursor:pointer;padding:0;margin-top:4px}
+.tot{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.tot span{color:var(--muted);font-size:.9rem}
+.tot b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tot.big b{font:800 1.4rem/1 var(--f-display)}
+.empty{color:var(--muted);text-align:center;padding:40px 0;display:grid;gap:12px;justify-items:center}
+.steps-mini{display:flex;gap:6px;font:500 .72rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.steps-mini span[aria-current="step"]{color:var(--berry)}
+.radio-cards{display:grid;gap:8px}
+.radio-cards label{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.92rem}
+.radio-cards label:has(input:checked){border-color:var(--berry)}
+.radio-cards small{display:block;color:var(--muted)}
+.radio-cards input{accent-color:var(--berry);margin-top:4px}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--bg);padding:.75em 1.1em;border-radius:99px;font-size:.92rem;z-index:40;transition:all .2s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ilustraciones */
+.tray{fill:var(--tray);stroke:var(--tray-edge);stroke-width:2}
+.cr{fill:var(--crust)} .cr-d{fill:var(--crust-d)} .cr-l{fill:var(--crust-l)}
+.hollow{fill:var(--crust-d);opacity:.55}
+.flute{fill:none;stroke:var(--crust-d);stroke-width:3;stroke-dasharray:2.4 2.6;opacity:.7}
+.mj{fill:var(--manjar)} .co{fill:var(--cocoa)} .me{fill:var(--meringue)}
+.f-berry{fill:var(--berry)} .f-herb{fill:var(--herb)} .f-cream{fill:var(--meringue)}
+.spiral{fill:none;stroke:var(--crust-d);stroke-width:1.6;opacity:.7}
+.dots{fill:var(--crust-d);opacity:.45}
+</style>
+</head>
+<body>
+
+<div class="mock" id="mock">
+  <div class="wrap">
+    <span><b>Maqueta de propuesta.</b> Los datos con <span class="tbd">borde punteado</span> están por completar y los precios vienen del sitio actual. Carro, checkout y formularios son de demostración: no envían nada.</span>
+    <button type="button" id="mock-x">Ocultar</button>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Casacake, inicio">casacake<i>.</i></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#tienda">Tienda</a>
+      <a href="#calculadora">Calculadora de cóctel</a>
+      <a href="#ideas">Ideas</a>
+      <a href="#empresas">Empresas</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="cart-btn" type="button" id="open-cart" aria-label="Abrir carro">Carro <span class="count" id="cart-count">0</span></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="inicio" style="padding-block:0">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Bases horneadas · Región de O'Higgins</p>
+      <h1>Listas para <span>rellenar.</span></h1>
+      <p class="lede">Tacitas, tartaletas, cachitos y hojarasca horneadas y crujientes. Tú pones el relleno: dulce o salado, frío o caliente.</p>
+      <div class="ctas">
+        <a class="btn btn-berry" href="#tienda">Comprar ahora</a>
+        <a class="btn btn-ghost" href="#empresas">Ventas a empresas</a>
+      </div>
+      <p class="lider">También en supermercados <a href="https://www.lider.cl/supermercado/product/sku/4542248/casacake-tacitas-de-coctel" target="_blank" rel="noopener">Lider</a></p>
+    </div>
+    <div class="hero-art" id="hero-art" aria-hidden="true"></div>
+  </div>
+</section>
+
+<div class="facts">
+  <div class="wrap">
+    <ul>
+      <li><strong>Neutras y crujientes</strong><span>Para dulce o salado</span></li>
+      <li><strong>Frío o caliente</strong><span>Rellena como prefieras</span></li>
+      <li><strong>5 días</strong><span>Duración de la tacita una vez abierta</span></li>
+      <li><strong>Por bandeja o por mayor</strong><span>Precios especiales a empresas</span></li>
+    </ul>
+  </div>
+</div>
+
+<section id="tienda">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Tienda</p>
+        <h2>Nuestros productos</h2>
+      </div>
+      <div class="chips" role="group" aria-label="Filtrar" id="chips"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="calc" id="calculadora">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Calculadora de cóctel</p>
+        <h2>¿Cuántas bandejas necesitas?</h2>
+      </div>
+      <p>Indica invitados y cuántos bocados con base quieres por persona. Calculamos la compra más económica con los formatos disponibles.</p>
+    </div>
+    <div class="calc-box">
+      <form class="calc-in" id="calc" novalidate>
+        <div class="row">
+          <div class="field"><label for="k-inv">Invitados</label><input id="k-inv" type="number" min="1" value="40" inputmode="numeric"></div>
+          <div class="field"><label for="k-bpp">Bocados por persona</label><input id="k-bpp" type="number" min="1" value="6" inputmode="numeric"></div>
+        </div>
+        <fieldset class="field"><legend>Bases a usar</legend><div class="checks" id="k-types"></div></fieldset>
+      </form>
+      <div class="calc-out">
+        <div class="tbl-wrap"><table id="k-table"></table></div>
+        <p class="calc-note" id="k-note"></p>
+        <div class="calc-actions"><button class="btn btn-berry" type="button" id="k-add">Agregar todo al carro</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ideas">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Ideas para rellenar</p>
+        <h2>Una base, muchos cócteles</h2>
+      </div>
+    </div>
+    <div class="ideas" id="ideas-list"></div>
+  </div>
+</section>
+
+<section class="b2b" id="empresas">
+  <div class="wrap">
+    <div class="side">
+      <p class="eyebrow">Empresas y mayoristas</p>
+      <h2>Pedidos grandes, precio de fábrica</h2>
+      <p>Abastecemos a negocios que trabajan con volumen. Cuéntanos qué productos usas y cuántas bandejas al mes, y te enviamos una propuesta con precios por volumen y despacho.</p>
+      <div class="who"><span>Banqueteras</span><span>Pastelerías</span><span>Hoteles y casinos</span><span>Cafeterías</span><span>Distribuidores</span></div>
+    </div>
+    <form class="form" id="b2b-form" novalidate>
+      <div class="field"><label for="b-nombre">Nombre</label><input id="b-nombre" name="nombre" autocomplete="name" placeholder="María González"></div>
+      <div class="field"><label for="b-empresa">Empresa</label><input id="b-empresa" name="empresa" autocomplete="organization" placeholder="Banquetería Las Rosas"></div>
+      <div class="field"><label for="b-tipo">Tipo de negocio</label>
+        <select id="b-tipo" name="tipo"><option>Banquetería</option><option>Pastelería</option><option>Hotel o casino</option><option>Cafetería</option><option>Distribuidor</option><option>Otro</option></select></div>
+      <div class="field"><label for="b-comuna">Ciudad o comuna</label><input id="b-comuna" name="comuna" placeholder="Rancagua"></div>
+      <div class="field"><label for="b-tel">Teléfono / WhatsApp</label><input id="b-tel" name="tel" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678"></div>
+      <div class="field"><label for="b-mail">Correo</label><input id="b-mail" name="mail" type="email" autocomplete="email" placeholder="contacto@empresa.cl"></div>
+      <fieldset class="field full"><legend>Productos de interés</legend><div class="checks" id="b-prods"></div></fieldset>
+      <div class="field"><label for="b-vol">Bandejas al mes (aprox.)</label>
+        <select id="b-vol" name="vol"><option>Hasta 20</option><option selected>20 a 100</option><option>100 a 500</option><option>Más de 500</option></select></div>
+      <div class="field"><label for="b-frec">Frecuencia de compra</label>
+        <select id="b-frec" name="frec"><option>Semanal</option><option selected>Quincenal</option><option>Mensual</option><option>Por evento</option></select></div>
+      <div class="field full"><label for="b-msg">Detalles</label><textarea id="b-msg" name="msg" placeholder="Ej.: hacemos 4 matrimonios al mes de 150 personas, usamos tacitas y tartaletas."></textarea></div>
+      <div class="full actions"><p class="note" id="b-err" role="alert"></p><button class="btn btn-berry" type="submit">Solicitar propuesta</button></div>
+    </form>
+  </div>
+</section>
+
+<section id="nosotros">
+  <div class="wrap two">
+    <div class="about">
+      <p class="eyebrow">Nosotros</p>
+      <h2>Empresa familiar, horno propio</h2>
+      <p>Casacake hace bases horneadas listas para rellenar y dulces chilenos para el hogar, la repostería y los eventos. Nuestros productos se venden en línea, en supermercados Lider y directo a empresas.</p>
+      <p><span class="tbd">Por completar: historia de la familia, año de inicio y ubicación de la planta.</span></p>
+    </div>
+    <div class="faq">
+      <p class="eyebrow" style="margin-bottom:14px">Preguntas frecuentes</p>
+      <details open><summary>¿Con qué se pueden rellenar?</summary><p>Son bases neutras: sirven para preparaciones dulces o saladas, frías o calientes.</p></details>
+      <details><summary>¿Cuánto duran una vez abiertas?</summary><p>La tacita cóctel dura 5 días una vez abierta la bandeja. <span class="tbd">Confirmar duración del resto</span></p></details>
+      <details><summary>¿Hacen despacho?</summary><p><span class="tbd">Por completar: comunas, costo y días de despacho</span></p></details>
+      <details><summary>¿Dónde más los encuentro?</summary><p>En supermercados Lider y en tiendas de repostería.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer id="contacto">
+  <div class="wrap">
+    <div>
+      <h4>Casacake SpA</h4>
+      <p>Bases horneadas listas para rellenar. Región de O'Higgins, Chile.</p>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <ul>
+        <li>Correo <span class="tbd">por completar</span></li>
+        <li>WhatsApp <span class="tbd">+56 9 ···· ····</span></li>
+        <li>Dirección <span class="tbd">por completar</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Tienda</h4>
+      <ul>
+        <li><a href="#tienda">Productos</a></li>
+        <li><a href="#calculadora">Calculadora de cóctel</a></li>
+        <li><a href="#empresas">Empresas y mayoristas</a></li>
+      </ul>
+    </div>
+    <p class="legal">© Casacake SpA · <span class="tbd">RUT</span></p>
+  </div>
+</footer>
+
+<a class="wa" href="#empresas" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.3Z"/></svg>WhatsApp</a>
+
+<dialog class="drawer" id="drawer" aria-labelledby="drawer-title">
+  <div class="drawer-in">
+    <div class="drawer-head">
+      <div><p class="steps-mini" id="steps-mini"></p><h3 id="drawer-title">Tu carro</h3></div>
+      <button class="x" type="button" id="close-cart" aria-label="Cerrar">×</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+    <div class="drawer-foot" id="drawer-foot"></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* Catálogo tomado de casacake.cl (precios publicados; verificar antes de lanzar) */
+const PRODUCTS = [
+  {id:'tacita-50', name:'Tacita cóctel neutra', base:'tacita', cat:'coctel', art:'tacita', pack:'Bandeja de 50 unidades', units:50, price:4500,
+   desc:'Horneada, neutra y crujiente. Rellénala con lo que prefieras.'},
+  {id:'tacita-150', name:'Tacita cóctel neutra · Pack 3', base:'tacita', cat:'coctel', art:'tacita', pack:'3 bandejas · 150 unidades', units:150, price:14900,
+   desc:'Tres bandejas de tacitas para eventos y cócteles grandes.'},
+  {id:'tartaleta-72', name:'Mini tartaleta flor cóctel · Pack 3', base:'tartaleta', cat:'coctel', art:'flor', pack:'3 bandejas × 24 · 72 unidades', units:72, price:14900,
+   desc:'Tartaletas con borde de flor, para crema pastelera, frutas o rellenos salados.'},
+  {id:'cachito-90', name:'Cachito cóctel · Pack 3', base:'cachito', cat:'coctel', art:'cachito', pack:'3 bandejas × 30 · 90 unidades', units:90, price:14900,
+   desc:'Cachitos crujientes listos para rellenar con crema, manjar o mousse.'},
+  {id:'hojarasca-60', name:'Hojarasca cóctel', base:'hojarasca', cat:'chilenos', art:'hoja', pack:'Bandeja de 60 tapitas', units:60, price:4500,
+   desc:'Tapitas de hojarasca para armar chilenitos y dulces típicos con manjar.'},
+  {id:'chilenito-36', name:'Mini chilenito · Pack 3', cat:'chilenos', art:'chilenito', pack:'3 bandejas × 12 · 36 unidades', units:36, price:10490, out:true,
+   desc:'Mini chilenitos listos para servir.'},
+  {id:'alfajor-110', name:'Galletitas para mini alfajores · Pack 3', cat:'chilenos', art:'alfajor', pack:'110 unidades · sabor chocolate', units:110, price:null,
+   desc:'Galletitas sabor chocolate artesanal para armar mini alfajores.'},
+  {id:'chileno-6', name:'Chilenos rellenos de manjar', cat:'dulces', art:'chileno', pack:'Caja de 6 unidades', units:6, price:null, range:'$2.500 – $2.790',
+   desc:'Dulce típico chileno de hojarasca con manjar. Línea Dulces Premium.'},
+  {id:'chileno-mer-6', name:'Chilenos con manjar y baño de merengue', cat:'dulces', art:'chileno-mer', pack:'Caja de 6 unidades', units:6, price:null, range:'$2.500 – $2.790',
+   desc:'Chilenos rellenos de manjar con baño de merengue. Línea Dulces Premium.'}
+];
+const CATS = [['todo','Todo'],['coctel','Bases cóctel'],['chilenos','Para dulces chilenos'],['dulces','Dulces premium']];
+const STORE = 'casacake-carro';
+const $ = s => document.querySelector(s);
+const nf = new Intl.NumberFormat('es-CL');
+const money = n => '$' + nf.format(Math.round(n));
+const byId = id => PRODUCTS.find(p => p.id === id);
+
+/* ---------- ilustraciones ---------- */
+const item = {
+  tacita(x,y,r,fill){ return `<circle cx="${x}" cy="${y}" r="${r}" class="cr"/><circle cx="${x}" cy="${y}" r="${r-2.5}" class="flute"/><circle cx="${x}" cy="${y}" r="${r*.58}" class="${fill || 'hollow'}"/>${fill==='f-herb'?`<circle cx="${x-r*.2}" cy="${y-r*.15}" r="${r*.16}" class="f-cream"/>`:''}`; },
+  flor(x,y,r,fill){ let s=''; for(let i=0;i<8;i++){const a=i*Math.PI/4; s+=`<circle cx="${(x+Math.cos(a)*r*.66).toFixed(1)}" cy="${(y+Math.sin(a)*r*.66).toFixed(1)}" r="${(r*.36).toFixed(1)}" class="cr"/>`;} return s+`<circle cx="${x}" cy="${y}" r="${r*.7}" class="cr"/><circle cx="${x}" cy="${y}" r="${r*.48}" class="${fill || 'hollow'}"/>`; },
+  hoja(x,y,r){ return `<circle cx="${x}" cy="${y}" r="${r}" class="cr-l"/><circle cx="${x}" cy="${y}" r="${r}" class="flute" style="opacity:.35"/><circle cx="${x-r*.3}" cy="${y-r*.25}" r="${r*.09}" class="dots"/><circle cx="${x+r*.35}" cy="${y-r*.1}" r="${r*.07}" class="dots"/><circle cx="${x-r*.05}" cy="${y+r*.3}" r="${r*.08}" class="dots"/><circle cx="${x+r*.25}" cy="${y+r*.4}" r="${r*.06}" class="dots"/>`; },
+  cachito(x,y,r,fill){ return `<path d="M${x-r*.15} ${y+r} L${x-r*.85} ${y-r*.45} Q${x} ${y-r*1.15} ${x+r*.85} ${y-r*.45} Z" class="cr"/><path d="M${x-r*.55} ${y-r*.05} Q${x} ${y-r*.3} ${x+r*.6} ${y}" class="spiral"/><path d="M${x-r*.38} ${y+r*.35} Q${x} ${y+r*.15} ${x+r*.32} ${y+r*.35}" class="spiral"/><ellipse cx="${x}" cy="${y-r*.62}" rx="${r*.72}" ry="${r*.32}" class="${fill || 'hollow'}"/>`; },
+  chilenito(x,y,r,mer){ return `<ellipse cx="${x}" cy="${y+r*.45}" rx="${r}" ry="${r*.28}" class="cr-d"/><rect x="${x-r}" y="${y+r*.05}" width="${2*r}" height="${r*.4}" class="cr"/><ellipse cx="${x}" cy="${y+r*.05}" rx="${r}" ry="${r*.28}" class="mj"/><rect x="${x-r}" y="${y-r*.3}" width="${2*r}" height="${r*.35}" class="mj"/><ellipse cx="${x}" cy="${y-r*.3}" rx="${r}" ry="${r*.28}" class="cr"/><rect x="${x-r}" y="${y-r*.62}" width="${2*r}" height="${r*.32}" class="cr"/><ellipse cx="${x}" cy="${y-r*.62}" rx="${r}" ry="${r*.28}" class="${mer?'me':'cr-l'}"/>${mer?`<ellipse cx="${x}" cy="${y-r*.75}" rx="${r*.8}" ry="${r*.24}" class="me"/>`:''}`; },
+  alfajor(x,y,r){ return `<circle cx="${x}" cy="${y}" r="${r}" class="co"/><circle cx="${x}" cy="${y}" r="${r*.72}" class="co" style="opacity:.7;fill:var(--manjar)"/><circle cx="${x}" cy="${y}" r="${r*.6}" class="co"/>`; }
+};
+function trayArt(kind, opts={}){
+  const W=240, H=170, cols=opts.cols||4, rows=opts.rows||3, pad=26, r=opts.r||17;
+  const fills = opts.fills||[];
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label||''}"><rect x="6" y="8" width="${W-12}" height="${H-16}" rx="16" class="tray"/>`;
+  for(let j=0;j<rows;j++) for(let i=0;i<cols;i++){
+    const x = pad + (W-2*pad)*(cols===1?.5:i/(cols-1)), y = pad+4 + (H-2*pad-8)*(rows===1?.5:j/(rows-1));
+    const k = j*cols+i;
+    if (kind==='chileno' || kind==='chileno-mer') s += item.chilenito(x,y,r,kind==='chileno-mer');
+    else if (kind==='chilenito') s += item.chilenito(x,y,r,true);
+    else s += item[kind](x,y,r,fills[k % (fills.length||1)]);
+  }
+  return s + '</svg>';
+}
+const ART = {
+  tacita: p => trayArt('tacita',{label:p.name}),
+  flor: p => trayArt('flor',{label:p.name}),
+  cachito: p => trayArt('cachito',{label:p.name,r:19}),
+  hoja: p => trayArt('hoja',{label:p.name,cols:5,r:16}),
+  chilenito: p => trayArt('chilenito',{label:p.name,r:18}),
+  alfajor: p => trayArt('alfajor',{label:p.name,cols:5,r:15}),
+  chileno: p => trayArt('chileno',{label:p.name,cols:3,rows:2,r:26}),
+  'chileno-mer': p => trayArt('chileno-mer',{label:p.name,cols:3,rows:2,r:26})
+};
+const art = p => ART[p.art](p);
+
+/* hero: bandeja de tacitas con algunas ya rellenas */
+$('#hero-art').innerHTML = trayArt('tacita',{cols:6,rows:4,r:15,fills:[null,'f-berry',null,'f-herb',null,null,'f-cream',null,'f-berry',null,null,'f-herb',null,null,'f-cream',null,'f-berry',null,'f-herb',null,null,'f-cream',null,null]})
+  .replace('<svg ', '<svg style="filter:drop-shadow(0 18px 24px rgb(80 30 20 / .14))" ');
+
+/* ---------- carro ---------- */
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem(STORE)) || []; } catch(e) { cart = []; }
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(cart)); } catch(e) {} };
+const updateCount = () => { $('#cart-count').textContent = cart.reduce((a,l) => a + l.qty, 0); };
+function addToCart(id, qty){
+  const l = cart.find(x => x.id === id); l ? l.qty += qty : cart.push({id, qty});
+  save(); updateCount();
+}
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ---------- tienda ---------- */
+let current = 'todo';
+$('#chips').innerHTML = CATS.map(([k,l]) => `<button class="chip" type="button" data-cat="${k}" aria-pressed="${k===current}">${l}</button>`).join('');
+$('#chips').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  current = b.dataset.cat;
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === b));
+  renderGrid();
+});
+function priceHtml(p){
+  if (p.price) return `<span class="price">${money(p.price)}</span><span class="per">${money(p.price/p.units)} c/u</span>`;
+  return `<span class="tbd">${p.range ? p.range + ' · confirmar' : 'Precio por completar'}</span>`;
+}
+function renderGrid(){
+  $('#grid').innerHTML = PRODUCTS.filter(p => current === 'todo' || p.cat === current).map(p => `
+    <article class="prod" data-id="${p.id}">
+      <div class="prod-art">${art(p)}${p.out ? '<span class="badge out">Agotado</span>' : ''}</div>
+      <div class="prod-body">
+        <div><h3>${p.name}</h3><p class="pack">${p.pack}</p></div>
+        <p class="prod-desc">${p.desc}</p>
+        <div class="price-row">${priceHtml(p)}</div>
+        <div class="buy">
+          <div class="stepper"><button type="button" data-step="-1" aria-label="Menos">−</button><input type="number" id="q-${p.id}" min="1" value="1" inputmode="numeric" aria-label="Cantidad"><button type="button" data-step="1" aria-label="Más">+</button></div>
+          <button class="btn ${p.out ? 'btn-ghost' : 'btn-berry'}" type="button" data-add="${p.id}" ${p.out ? 'disabled' : ''}>${p.out ? 'Sin stock' : 'Agregar'}</button>
+        </div>
+      </div>
+    </article>`).join('');
+}
+renderGrid();
+$('#grid').addEventListener('click', e => {
+  const st = e.target.closest('[data-step]');
+  if (st){ const inp = st.closest('.buy').querySelector('input'); inp.value = Math.max(1, (+inp.value || 1) + +st.dataset.step); }
+  const add = e.target.closest('[data-add]');
+  if (add && !add.disabled){
+    const p = byId(add.dataset.add); const inp = add.closest('.buy').querySelector('input');
+    const qty = Math.max(1, Math.round(+inp.value || 1)); inp.value = 1;
+    addToCart(p.id, qty); toast(`Agregado: ${qty} × ${p.name}`);
+  }
+});
+
+/* ---------- calculadora ---------- */
+const TYPES = [
+  {key:'tacita', name:'Tacitas', skus:['tacita-50','tacita-150'], on:true},
+  {key:'tartaleta', name:'Mini tartaletas flor', skus:['tartaleta-72'], on:true},
+  {key:'cachito', name:'Cachitos', skus:['cachito-90'], on:true},
+  {key:'hojarasca', name:'Hojarasca', skus:['hojarasca-60'], on:false}
+];
+$('#k-types').innerHTML = TYPES.map(t => `<label><input type="checkbox" id="kt-${t.key}" value="${t.key}" ${t.on?'checked':''}>${t.name}</label>`).join('');
+/* compra más barata que cubre n unidades con hasta dos formatos */
+function cheapest(n, skus){
+  const [a, b] = skus.map(byId);
+  let best = null;
+  for (let i = 0; i <= Math.ceil(n / a.units); i++){
+    const rest = Math.max(0, n - i * a.units);
+    const j = b ? Math.ceil(rest / b.units) : 0;
+    if (!b && rest > 0) continue;
+    const cost = i * a.price + j * (b ? b.price : 0), units = i * a.units + j * (b ? b.units : 0);
+    if (!best || cost < best.cost || (cost === best.cost && units < best.units)) best = {cost, units, buy:[[a,i]].concat(b ? [[b,j]] : []).filter(x => x[1] > 0)};
+  }
+  return best;
+}
+let plan = [];
+function calc(){
+  const inv = Math.max(1, Math.round(+$('#k-inv').value || 0));
+  const bpp = Math.max(1, Math.round(+$('#k-bpp').value || 0));
+  const sel = TYPES.filter(t => document.getElementById('kt-' + t.key).checked);
+  const total = inv * bpp;
+  if (!sel.length){ $('#k-table').innerHTML = ''; $('#k-note').textContent = 'Elige al menos un tipo de base.'; $('#k-add').disabled = true; plan = []; return; }
+  const each = Math.ceil(total / sel.length);
+  plan = []; let sum = 0;
+  const rows = sel.map(t => {
+    const c = cheapest(each, t.skus); sum += c.cost;
+    c.buy.forEach(([p,q]) => plan.push([p.id,q]));
+    return `<tr><td>${t.name}</td><td class="num">${nf.format(each)}</td><td>${c.buy.map(([p,q]) => `${q} × ${p.pack.toLowerCase()}`).join('<br>')}</td><td class="num">${nf.format(c.units)}</td><td class="num">${money(c.cost)}</td></tr>`;
+  }).join('');
+  $('#k-table').innerHTML = `<thead><tr><th>Base</th><th class="num">Necesitas</th><th>Compra</th><th class="num">Recibes</th><th class="num">Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="4">Total para ${nf.format(inv)} invitados · ${nf.format(total)} bocados</td><td class="num">${money(sum)}</td></tr></tfoot>`;
+  $('#k-note').textContent = 'Estimación con los precios publicados. Para eventos sobre 300 personas te conviene cotizar como empresa.';
+  $('#k-add').disabled = false;
+}
+$('#calc').addEventListener('input', calc);
+$('#k-add').addEventListener('click', () => { plan.forEach(([id,q]) => addToCart(id, q)); toast('Bandejas agregadas al carro'); });
+calc();
+
+/* ---------- ideas ---------- */
+const IDEAS = [
+  ['Tacitas', 'Ave pimentón, ceviche, queso crema con ciboulette o mousse de chocolate.', trayArt('tacita',{cols:2,rows:2,r:30,fills:['f-berry','f-herb','f-cream','f-berry']})],
+  ['Mini tartaletas flor', 'Crema pastelera con frutillas, lemon pie o crema de palta con camarón.', trayArt('flor',{cols:2,rows:2,r:30,fills:['f-berry','f-cream','f-herb','f-cream']})],
+  ['Cachitos', 'Crema chantilly, manjar o mousse de maracuyá.', trayArt('cachito',{cols:2,rows:2,r:32,fills:['f-cream','mj','f-cream','f-berry']})],
+  ['Hojarasca', 'Chilenitos con manjar y merengue, o milhojas en formato cóctel.', trayArt('chilenito',{cols:2,rows:2,r:34})]
+];
+$('#ideas-list').innerHTML = IDEAS.map(([t,d,s]) => `<div class="idea">${s}<h3>${t}</h3><p>${d}</p></div>`).join('');
+
+/* ---------- cajón del carro ---------- */
+const drawer = $('#drawer');
+let view = 'cart', order = {};
+updateCount();
+$('#open-cart').addEventListener('click', () => { view = 'cart'; renderDrawer(); drawer.showModal(); });
+$('#close-cart').addEventListener('click', () => drawer.close());
+drawer.addEventListener('click', e => { if (e.target === drawer) drawer.close(); });
+const stepsMini = i => ['Carro','Datos','Listo'].map((s,k) => `<span ${k===i?'aria-current="step"':''}>${k+1}. ${s}</span>`).join('<span>·</span>');
+function totals(){
+  const sum = cart.reduce((a,l) => a + l.qty * (byId(l.id).price || 0), 0);
+  const pending = cart.some(l => !byId(l.id).price);
+  return {sum, pending, n: cart.reduce((a,l) => a + l.qty, 0)};
+}
+function orderText(){
+  const t = totals();
+  return ['Pedido Casacake',
+    ...cart.map(l => { const p = byId(l.id); return `- ${l.qty} × ${p.name} (${p.pack.toLowerCase()})${p.price ? ': ' + money(l.qty*p.price) : ''}`; }),
+    `Total: ${money(t.sum)}${t.pending ? ' + productos por confirmar' : ''}`,
+    `Nombre: ${order.nombre}`, `Teléfono: ${order.tel}`, `Entrega: ${order.entrega}`, `Pago: ${order.pago}`].join('\n');
+}
+function renderDrawer(){
+  const body = $('#drawer-body'), foot = $('#drawer-foot');
+  if (view === 'cart'){
+    $('#steps-mini').innerHTML = stepsMini(0); $('#drawer-title').textContent = 'Tu carro';
+    if (!cart.length){ body.innerHTML = `<div class="empty"><p>Tu carro está vacío.</p><button class="btn btn-ink" type="button" data-go="shop">Ver productos</button></div>`; foot.innerHTML = ''; return; }
+    body.innerHTML = cart.map((l,i) => { const p = byId(l.id); return `
+      <div class="line">${art(p)}
+        <div><b>${p.name}</b><small>${p.price ? money(p.price) + ' · ' : ''}${p.pack}</small><br><button class="rm" type="button" data-rm="${i}">Quitar</button></div>
+        <div class="stepper"><button type="button" data-lstep="-1" data-i="${i}" aria-label="Menos">−</button><input type="number" value="${l.qty}" data-lq="${i}" aria-label="Cantidad"><button type="button" data-lstep="1" data-i="${i}" aria-label="Más">+</button></div>
+      </div>`; }).join('');
+    const t = totals();
+    foot.innerHTML = `
+      <div class="tot big"><span>Subtotal</span><b>${money(t.sum)}</b></div>
+      ${t.pending ? '<p class="note">Incluye productos con precio por confirmar.</p>' : ''}
+      <p style="font-size:.82rem;color:var(--muted)">Despacho se calcula en el siguiente paso.</p>
+      <button class="btn btn-berry" type="button" data-go="datos">Continuar</button>`;
+  } else if (view === 'datos'){
+    $('#steps-mini').innerHTML = stepsMini(1); $('#drawer-title').textContent = 'Entrega y pago';
+    body.innerHTML = `<div class="field"><label for="c-nombre">Nombre</label><input id="c-nombre" autocomplete="name" value="${order.nombre||''}"></div>
+      <div class="field"><label for="c-tel">Teléfono / WhatsApp</label><input id="c-tel" type="tel" autocomplete="tel" value="${order.tel||''}" placeholder="+56 9 1234 5678"></div>
+      <fieldset class="field"><legend>Entrega</legend><div class="radio-cards">
+        <label><input type="radio" name="ent" id="ent-r" value="Retiro en tienda" checked><span>Retiro<small><span class="tbd">Dirección por completar</span></small></span></label>
+        <label><input type="radio" name="ent" id="ent-d" value="Despacho a domicilio"><span>Despacho a domicilio<small><span class="tbd">Comunas y costo por completar</span></small></span></label>
+      </div></fieldset>
+      <fieldset class="field"><legend>Pago</legend><div class="radio-cards">
+        <label><input type="radio" name="pago" id="pago-w" value="Webpay (tarjeta)" checked><span>Tarjeta de débito o crédito<small>Webpay</small></span></label>
+        <label><input type="radio" name="pago" id="pago-t" value="Transferencia"><span>Transferencia<small>Te enviamos los datos al confirmar</small></span></label>
+      </div></fieldset>
+      <p class="note" id="co-err" role="alert"></p>`;
+    foot.innerHTML = `<button class="btn btn-berry" type="button" data-go="send">Confirmar pedido</button><button class="btn btn-ghost" type="button" data-go="cart">Volver</button>`;
+  } else {
+    $('#steps-mini').innerHTML = stepsMini(2); $('#drawer-title').textContent = 'Pedido listo';
+    body.innerHTML = `<p>Así quedaría registrado tu pedido. En el sitio real aquí se paga con Webpay o se envían los datos de transferencia.</p><pre class="copybox" id="order-text"></pre><p style="font-size:.82rem;color:var(--muted)">Maqueta: este pedido no se envió.</p>`;
+    $('#order-text').textContent = orderText();
+    foot.innerHTML = `<button class="btn btn-ink" type="button" data-copy="order-text">Copiar resumen</button><button class="btn btn-ghost" type="button" data-go="reset">Nuevo pedido</button>`;
+  }
+}
+drawer.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go){
+    const g = go.dataset.go;
+    if (g === 'shop'){ drawer.close(); location.hash = 'tienda'; return; }
+    if (g === 'send'){
+      order = {nombre:$('#c-nombre').value.trim(), tel:$('#c-tel').value.trim(),
+        entrega:document.querySelector('input[name=ent]:checked').value, pago:document.querySelector('input[name=pago]:checked').value};
+      if (!order.nombre || !order.tel){ $('#co-err').textContent = 'Completa nombre y teléfono para continuar.'; return; }
+      view = 'done';
+    } else if (g === 'reset'){ cart = []; save(); updateCount(); view = 'cart'; }
+    else view = g;
+    renderDrawer(); return;
+  }
+  const rm = e.target.closest('[data-rm]');
+  if (rm){ cart.splice(+rm.dataset.rm, 1); save(); updateCount(); renderDrawer(); return; }
+  const ls = e.target.closest('[data-lstep]');
+  if (ls){ const l = cart[+ls.dataset.i]; l.qty = Math.max(1, l.qty + +ls.dataset.lstep); save(); updateCount(); renderDrawer(); return; }
+  const cp = e.target.closest('[data-copy]');
+  if (cp) copy(document.getElementById(cp.dataset.copy), cp);
+});
+drawer.addEventListener('change', e => {
+  if (!e.target.dataset.lq) return;
+  cart[+e.target.dataset.lq].qty = Math.max(1, Math.round(+e.target.value || 1)); save(); updateCount(); renderDrawer();
+});
+function copy(el, btn){
+  const label = btn.textContent;
+  const done = () => { btn.textContent = 'Copiado'; setTimeout(() => btn.textContent = label, 1800); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Texto seleccionado'; };
+  try { navigator.clipboard.writeText(el.textContent).then(done, fallback); } catch(e) { fallback(); }
+}
+
+/* ---------- formulario empresas ---------- */
+$('#b-prods').innerHTML = PRODUCTS.filter(p => !p.id.endsWith('-150')).map(p => `<label><input type="checkbox" id="bp-${p.id}" value="${p.name.replace(' · Pack 3','')}">${p.name.replace(' · Pack 3','')}</label>`).join('');
+$('#b2b-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  const prods = [...f.querySelectorAll('#b-prods input:checked')].map(i => i.value);
+  if (!f.nombre.value.trim() || (!f.tel.value.trim() && !f.mail.value.trim())){ $('#b-err').textContent = 'Indica tu nombre y un teléfono o correo.'; return; }
+  if (!prods.length){ $('#b-err').textContent = 'Elige al menos un producto.'; return; }
+  const text = ['Solicitud de propuesta para empresas',
+    `Nombre: ${f.nombre.value.trim()}`, f.empresa.value.trim() && `Empresa: ${f.empresa.value.trim()} (${f.tipo.value})`,
+    f.comuna.value.trim() && `Ciudad: ${f.comuna.value.trim()}`, f.tel.value.trim() && `Teléfono: ${f.tel.value.trim()}`, f.mail.value.trim() && `Correo: ${f.mail.value.trim()}`,
+    `Productos: ${prods.join(', ')}`, `Bandejas al mes: ${f.vol.value}`, `Frecuencia: ${f.frec.value}`,
+    f.msg.value.trim() && `Detalles: ${f.msg.value.trim()}`].filter(Boolean).join('\n');
+  f.innerHTML = `<div class="sent"><h3 style="font-size:1.5rem;font-weight:800">Solicitud lista</h3><p>En el sitio real esta solicitud llega al equipo comercial y respondemos con una propuesta por volumen. En esta maqueta no se envió.</p><pre class="copybox" id="b-text"></pre><div><button class="btn btn-ink" type="button" id="b-copy">Copiar resumen</button></div></div>`;
+  $('#b-text').textContent = text;
+  $('#b-copy').addEventListener('click', ev => copy($('#b-text'), ev.currentTarget));
+});
+
+$('#mock-x').addEventListener('click', () => { $('#mock').hidden = true; });
+</script>
+</body>
+</html>
