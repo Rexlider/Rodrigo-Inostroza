@@ -33,3 +33,9 @@ Productos tomados de los sitios actuales (vía buscador, octubre 2026):
 ## Por completar
 
 Todo lo marcado con borde punteado en las maquetas: precios de Agrotrade, WhatsApp, direcciones, correo de Casacake, RUT, historia de la familia, zonas y costos de despacho, y fotos reales de producto (hoy son ilustraciones).
+
+## PDF de concepto
+
+`concepto/Concepto-Agrotrade.pdf` y `concepto/Concepto-Casacake.pdf` presentan cada propuesta: diagnóstico del sitio actual, público, identidad visual, estructura, tienda, flujo de compra, pedidos por volumen, versión móvil, datos pendientes y próximos pasos.
+
+Para regenerarlos después de cambiar las maquetas: `cd maquetas/concepto && npm install && node generar.cjs` (usa Playwright con Chromium).

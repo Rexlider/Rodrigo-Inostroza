@@ -1,0 +1,14 @@
+{
+  "name": "concepto-sitios",
+  "private": true,
+  "description": "Genera los PDF de concepto de Agrotrade y Casacake a partir de las maquetas",
+  "scripts": { "build": "node generar.cjs" },
+  "dependencies": {
+    "@fontsource/big-shoulders-display": "^5.0.0",
+    "@fontsource/bricolage-grotesque": "^5.0.0",
+    "@fontsource/dm-mono": "^5.0.0",
+    "@fontsource/figtree": "^5.0.0",
+    "@fontsource/ibm-plex-mono": "^5.0.0",
+    "@fontsource/public-sans": "^5.0.0"
+  }
+}
