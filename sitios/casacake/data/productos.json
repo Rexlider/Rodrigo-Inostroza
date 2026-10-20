@@ -1,0 +1,89 @@
+{
+  "categorias": [
+    { "id": "coctel", "nombre": "Bases para cóctel", "descripcion": "Tacitas, tartaletas y cachitos horneados, listos para rellenar." },
+    { "id": "chilenos", "nombre": "Para dulces chilenos", "descripcion": "Hojarasca, chilenitos y galletitas para armar dulces típicos." },
+    { "id": "dulces", "nombre": "Dulces premium", "descripcion": "Dulces chilenos listos para servir." }
+  ],
+  "productos": [
+    {
+      "codigo": "CC-TAC-050", "nombre": "Tacita cóctel neutra", "categoria": "coctel",
+      "formato": "Bandeja", "unidades": 50, "precio": 4500, "ilustracion": "tacita", "destacado": true, "disponible": true,
+      "descripcion": "Producto horneado, neutro y crujiente, listo para rellenar con lo que prefieras.",
+      "usos": ["Dulce o salado", "Frío o caliente"], "duracion": "5 días una vez abierta",
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": "/en/tacita-coctel-neutra-bandeja-50-un"
+    },
+    {
+      "codigo": "CC-TAC-150", "nombre": "Tacita cóctel neutra · Pack 3", "categoria": "coctel",
+      "formato": "Pack de 3 bandejas", "unidades": 150, "precio": 14900, "ilustracion": "tacita", "destacado": false, "disponible": true,
+      "descripcion": "Tres bandejas de 50 tacitas horneadas, neutras y crujientes, para eventos y cócteles grandes.",
+      "usos": ["Dulce o salado", "Frío o caliente"], "duracion": "5 días una vez abierta",
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": "/en/pack-3-bandeja-tacita-coctel-neutra-50-un"
+    },
+    {
+      "codigo": "CC-TAR-072", "nombre": "Mini tartaleta flor cóctel · Pack 3", "categoria": "coctel",
+      "formato": "Pack de 3 bandejas de 24", "unidades": 72, "precio": 14900, "ilustracion": "flor", "destacado": true, "disponible": true,
+      "descripcion": "Mini tartaletas con borde de flor, listas para rellenar.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": null
+    },
+    {
+      "codigo": "CC-CAC-090", "nombre": "Cachito cóctel · Pack 3", "categoria": "coctel",
+      "formato": "Pack de 3 bandejas de 30", "unidades": 90, "precio": 14900, "ilustracion": "cachito", "destacado": true, "disponible": true,
+      "descripcion": "Cachitos horneados y crujientes, listos para rellenar.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": null
+    },
+    {
+      "codigo": "CC-HOJ-060", "nombre": "Hojarasca cóctel", "categoria": "chilenos",
+      "formato": "Bandeja", "unidades": 60, "precio": 4500, "ilustracion": "hoja", "destacado": true, "disponible": true,
+      "descripcion": "Tapitas de hojarasca para armar chilenitos y dulces típicos con manjar.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": null
+    },
+    {
+      "codigo": "CC-CHI-036", "nombre": "Mini chilenito · Pack 3", "categoria": "chilenos",
+      "formato": "Pack de 3 bandejas de 12", "unidades": 36, "precio": 10490, "ilustracion": "chilenito", "destacado": false, "disponible": false,
+      "descripcion": "Mini chilenitos listos para servir.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": "/pack-3-bandeja-mini-chilenito-12-un"
+    },
+    {
+      "codigo": "CC-ALF-110", "nombre": "Galletitas para mini alfajores · Pack 3", "categoria": "chilenos",
+      "formato": "Pack de 3 bandejas", "unidades": 110, "precio": null, "ilustracion": "alfajor", "destacado": false, "disponible": true,
+      "descripcion": "Galletitas sabor chocolate artesanal para armar mini alfajores.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": "/en/bandeja-galletitas-para-mini-alfajores"
+    },
+    {
+      "codigo": "CC-CHM-006", "nombre": "Chilenos rellenos de manjar", "categoria": "dulces",
+      "formato": "Caja", "unidades": 6, "precio": null, "ilustracion": "chileno", "destacado": false, "disponible": true,
+      "descripcion": "Dulce típico chileno de hojarasca rellena de manjar.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": null
+    },
+    {
+      "codigo": "CC-CHE-006", "nombre": "Chilenos con manjar y baño de merengue", "categoria": "dulces",
+      "formato": "Caja", "unidades": 6, "precio": null, "ilustracion": "chileno-mer", "destacado": false, "disponible": true,
+      "descripcion": "Chilenos rellenos de manjar con baño de merengue.",
+      "usos": [], "duracion": null,
+      "medidas": null, "peso": null, "conservacion": null, "ean": null, "foto": null,
+      "urlAntigua": null
+    }
+  ],
+  "ideas": [
+    { "titulo": "Tacitas saladas", "productos": ["CC-TAC-050", "CC-TAC-150"], "texto": "Ave pimentón, ceviche o queso crema con ciboulette.", "ilustracion": "tacita", "rellenos": ["f-herb", "f-cream", "f-berry", "f-cream"] },
+    { "titulo": "Tacitas dulces", "productos": ["CC-TAC-050", "CC-TAC-150"], "texto": "Mousse de chocolate, crema pastelera con frutillas o lemon pie.", "ilustracion": "tacita", "rellenos": ["f-berry", "mj", "f-cream", "f-berry"] },
+    { "titulo": "Mini tartaletas flor", "productos": ["CC-TAR-072"], "texto": "Crema pastelera con frutas, lemon pie o crema de palta con camarón.", "ilustracion": "flor", "rellenos": ["f-berry", "f-cream", "f-herb", "f-cream"] },
+    { "titulo": "Cachitos", "productos": ["CC-CAC-090"], "texto": "Crema chantilly, manjar o mousse de maracuyá.", "ilustracion": "cachito", "rellenos": ["f-cream", "mj", "f-cream", "f-berry"] },
+    { "titulo": "Chilenitos caseros", "productos": ["CC-HOJ-060"], "texto": "Dos tapitas de hojarasca, manjar al medio y merengue encima.", "ilustracion": "chilenito", "rellenos": [] },
+    { "titulo": "Mini alfajores", "productos": ["CC-ALF-110"], "texto": "Galletitas de chocolate unidas con manjar y bañadas en chocolate.", "ilustracion": "alfajor", "rellenos": [] }
+  ]
+}

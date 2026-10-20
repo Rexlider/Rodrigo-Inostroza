@@ -1,0 +1,25 @@
+{
+  "nombre": "Casacake",
+  "razonSocial": "Casacake SpA",
+  "rut": null,
+  "dominio": "https://www.casacake.cl",
+  "lema": "Listas para rellenar.",
+  "descripcion": "Bases horneadas listas para rellenar: tacitas, tartaletas, cachitos y hojarasca para cócteles, repostería y eventos.",
+  "region": "Región de O'Higgins, Chile",
+  "correo": null,
+  "telefono": null,
+  "direccion": null,
+  "horario": null,
+  "mostrarPrecios": false,
+  "vendedores": [
+    { "nombre": null, "zona": "Ventas", "whatsapp": null }
+  ],
+  "redes": {
+    "instagram": null,
+    "facebook": "https://www.facebook.com/Casacake/"
+  },
+  "dondeComprar": [
+    { "nombre": "Supermercados Lider", "url": "https://www.lider.cl/supermercado/product/sku/4542248/casacake-tacitas-de-coctel" }
+  ],
+  "googleAnalytics": null
+}
