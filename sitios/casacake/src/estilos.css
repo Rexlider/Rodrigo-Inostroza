@@ -167,6 +167,8 @@ section{padding-block:64px}
 .specs dt,.specs dd{margin:0;padding:9px 0;border-bottom:1px solid var(--line)}
 .specs dt{color:var(--muted);padding-right:18px}
 .specs dd{text-align:right;font-variant-numeric:tabular-nums}
+.ingred{display:grid;gap:6px;font-size:.92rem;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ingred b{color:var(--ink)}
 .ask{display:grid;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
 .ask .row{display:flex;gap:10px;flex-wrap:wrap}
 .ask .row .btn{flex:1;min-width:180px}

@@ -290,6 +290,7 @@ for (const p of productos) {
         ${row('Medidas', p.medidas)}${row('Peso por unidad', p.peso)}${row('Peso neto', p.pesoNeto)}${row('Duración (envase cerrado)', p.duracion)}${p.abierta ? row('Una vez abierta', p.abierta) : ''}${row('Conservación', p.conservacion)}${row('Código de barras', p.ean)}
         ${sitio.mostrarPrecios ? row('Precio', p.precio && money(p.precio)) : ''}
       </dl>
+      ${p.ingredientes || p.alergenos ? `<div class="ingred">${p.ingredientes ? `<p><b>Ingredientes:</b> ${esc(p.ingredientes)}</p>` : ''}${p.alergenos ? `<p><b>Contiene:</b> ${esc(p.alergenos)}</p>` : ''}</div>` : ''}
       <div class="ask">
         <p><b>${p.disponible ? 'Consulta precio y disponibilidad' : 'Producto agotado por ahora'}</b><br><span class="muted">${p.disponible ? 'Te responde directamente un vendedor de ' + esc(sitio.nombre) + '.' : 'Escríbenos y te avisamos cuando vuelva.'}</span></p>
         <div class="row">

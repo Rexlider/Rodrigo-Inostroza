@@ -1,61 +1,277 @@
 {
   "categorias": [
-    { "id": "coctel", "nombre": "Bases para cóctel", "descripcion": "Tacitas, tartaletas y cachitos horneados, listos para rellenar." },
-    { "id": "chilenos", "nombre": "Para dulces chilenos", "descripcion": "Hojarascas artesanales para armar chilenitos y dulces típicos." }
+    {
+      "id": "coctel",
+      "nombre": "Bases para rellenar",
+      "descripcion": "Tacitas, tartaletas y cachitos horneados, en formato cóctel y estándar."
+    },
+    {
+      "id": "chilenos",
+      "nombre": "Para dulces chilenos",
+      "descripcion": "Hojarascas artesanales para armar chilenitos y dulces típicos."
+    }
   ],
   "productos": [
     {
-      "codigo": "CC-TAC-050", "nombre": "Tacitas cóctel neutras", "categoria": "coctel",
-      "formato": "Bandeja", "unidades": 50, "precio": 4500, "ilustracion": "tacita", "destacado": true, "disponible": true,
+      "codigo": "CC-TAC-050",
+      "nombre": "Tacitas cóctel neutras",
+      "categoria": "coctel",
+      "formato": "Bandeja",
+      "unidades": 50,
+      "precio": 4500,
+      "ilustracion": "tacita",
+      "destacado": true,
+      "disponible": true,
       "descripcion": "Tacitas horneadas, neutras y crujientes, listas para rellenar con preparaciones dulces o saladas. Se pueden calentar en horno convencional o microondas, y también bañar en chocolate.",
-      "usos": ["Dulce o salado", "Frío o caliente", "Horno o microondas", "Para bañar en chocolate"],
-      "medidas": "Ø 3,5 × 2 cm", "peso": "3 g", "pesoNeto": "110 g", "duracion": "180 días", "abierta": "5 días una vez abierta",
-      "conservacion": "En lugar seco", "ean": null, "fotos": ["productos/cc-tac-050-1.webp"],
-      "urlAntigua": "/en/tacita-coctel-neutra-bandeja-50-un"
+      "usos": [
+        "Dulce o salado",
+        "Frío o caliente",
+        "Horno o microondas",
+        "Para bañar en chocolate"
+      ],
+      "medidas": "Ø 3,5 × 2 cm",
+      "peso": "3 g",
+      "pesoNeto": "110 g",
+      "duracion": "180 días",
+      "abierta": "5 días una vez abierta",
+      "conservacion": "En lugar seco",
+      "ean": null,
+      "fotos": [
+        "productos/cc-tac-050-1.webp"
+      ],
+      "urlAntigua": "/en/tacita-coctel-neutra-bandeja-50-un",
+      "ingredientes": null,
+      "alergenos": null
     },
     {
-      "codigo": "CC-TAC-150", "nombre": "Tacitas cóctel neutras · Pack 3", "categoria": "coctel",
-      "formato": "Pack de 3 bandejas", "unidades": 150, "precio": 14900, "ilustracion": "tacita", "destacado": false, "disponible": true,
+      "codigo": "CC-TAC-150",
+      "nombre": "Tacitas cóctel neutras · Pack 3",
+      "categoria": "coctel",
+      "formato": "Pack de 3 bandejas",
+      "unidades": 150,
+      "precio": 14900,
+      "ilustracion": "tacita",
+      "destacado": false,
+      "disponible": true,
       "descripcion": "Tres bandejas de 50 tacitas horneadas, neutras y crujientes, para eventos y cócteles grandes.",
-      "usos": ["Dulce o salado", "Frío o caliente", "Horno o microondas", "Para bañar en chocolate"],
-      "medidas": "Ø 3,5 × 2 cm", "peso": "3 g", "pesoNeto": "3 × 110 g", "duracion": "180 días", "abierta": "5 días una vez abierta",
-      "conservacion": "En lugar seco", "ean": null, "fotos": ["productos/cc-tac-050-1.webp"],
-      "urlAntigua": "/en/pack-3-bandeja-tacita-coctel-neutra-50-un"
+      "usos": [
+        "Dulce o salado",
+        "Frío o caliente",
+        "Horno o microondas",
+        "Para bañar en chocolate"
+      ],
+      "medidas": "Ø 3,5 × 2 cm",
+      "peso": "3 g",
+      "pesoNeto": "3 × 110 g",
+      "duracion": "180 días",
+      "abierta": "5 días una vez abierta",
+      "conservacion": "En lugar seco",
+      "ean": null,
+      "fotos": [
+        "productos/cc-tac-050-1.webp"
+      ],
+      "urlAntigua": "/en/pack-3-bandeja-tacita-coctel-neutra-50-un",
+      "ingredientes": null,
+      "alergenos": null
     },
     {
-      "codigo": "CC-TAR-072", "nombre": "Mini tartaletas flor cóctel · Pack 3", "categoria": "coctel",
-      "formato": "Pack de 3 bandejas de 24", "unidades": 72, "precio": 14900, "ilustracion": "flor", "destacado": true, "disponible": true,
-      "descripcion": "Mini tartaletas con borde de flor, horneadas y listas para rellenar.",
-      "usos": [],
-      "medidas": null, "peso": null, "pesoNeto": null, "duracion": null, "abierta": null,
-      "conservacion": null, "ean": null, "fotos": [],
+      "codigo": "CC-TSD-030",
+      "nombre": "Tacitas STD neutras",
+      "categoria": "coctel",
+      "formato": "Bandeja",
+      "unidades": 30,
+      "precio": null,
+      "ilustracion": "tacita",
+      "destacado": false,
+      "disponible": true,
+      "descripcion": "Tacitas de tamaño estándar, horneadas y neutras, listas para rellenar y decorar.",
+      "usos": [
+        "Neutras",
+        "Tamaño estándar"
+      ],
+      "medidas": null,
+      "peso": null,
+      "pesoNeto": "200 g",
+      "duracion": null,
+      "abierta": null,
+      "conservacion": null,
+      "ean": null,
+      "fotos": [
+        "productos/cc-tsd-030-1.webp",
+        "productos/cc-tsd-030-2.webp"
+      ],
+      "ingredientes": "Harina de trigo, agua, margarina de horneo de origen animal (vacuno y cerdo), fécula de maíz, vainilla, lecitina de soya, sal, vinagre, leche en polvo descremada y propionato de calcio.",
+      "alergenos": "Gluten de trigo, soya y leche.",
       "urlAntigua": null
     },
     {
-      "codigo": "CC-CAC-090", "nombre": "Cachitos cóctel · Pack 3", "categoria": "coctel",
-      "formato": "Pack de 3 bandejas de 30", "unidades": 90, "precio": 14900, "ilustracion": "cachito", "destacado": true, "disponible": true,
-      "descripcion": "Cachitos horneados y crujientes, listos para rellenar.",
-      "usos": [],
-      "medidas": "Ø 2 × 5 cm", "peso": "5 g", "pesoNeto": null, "duracion": "180 días", "abierta": null,
-      "conservacion": "En lugar seco", "ean": null, "fotos": [],
-      "urlAntigua": null
+      "codigo": "CC-TAR-072",
+      "nombre": "Mini tartaletas flor cóctel · Pack 3",
+      "categoria": "coctel",
+      "formato": "Pack de 3 bandejas de 24",
+      "unidades": 72,
+      "precio": 14900,
+      "ilustracion": "flor",
+      "destacado": true,
+      "disponible": true,
+      "descripcion": "Mini tartaletas sabor vainilla con borde de flor, horneadas y listas para rellenar.",
+      "usos": [
+        "Sabor vainilla"
+      ],
+      "medidas": null,
+      "peso": null,
+      "pesoNeto": null,
+      "duracion": null,
+      "abierta": null,
+      "conservacion": null,
+      "ean": null,
+      "fotos": [
+        "productos/cc-tar-072-1.webp"
+      ],
+      "urlAntigua": null,
+      "ingredientes": null,
+      "alergenos": null
     },
     {
-      "codigo": "CC-HOJ-060", "nombre": "Hojarascas cóctel", "categoria": "chilenos",
-      "formato": "Bandeja", "unidades": 60, "precio": 4500, "ilustracion": "hoja", "destacado": true, "disponible": true,
+      "codigo": "CC-CAC-090",
+      "nombre": "Cachitos semidulces cóctel · Pack 3",
+      "categoria": "coctel",
+      "formato": "Pack de 3 bandejas de 30",
+      "unidades": 90,
+      "precio": 14900,
+      "ilustracion": "cachito",
+      "destacado": true,
+      "disponible": true,
+      "descripcion": "Cachitos horneados semidulces, listos para rellenar. Rellénalos como quieras: con manjar, mermelada o crema. También puedes bañarlos en chocolate o decorarlos con azúcar flor.",
+      "usos": [
+        "Semidulces",
+        "Manjar, mermelada o crema",
+        "Para bañar en chocolate"
+      ],
+      "medidas": "Ø 2 × 5 cm",
+      "peso": "5 g",
+      "pesoNeto": "3 × 110 g",
+      "duracion": "180 días",
+      "abierta": null,
+      "conservacion": "En lugar seco",
+      "ean": null,
+      "fotos": [
+        "productos/cc-cac-090-1.webp"
+      ],
+      "urlAntigua": null,
+      "ingredientes": null,
+      "alergenos": null
+    },
+    {
+      "codigo": "CC-HOJ-060",
+      "nombre": "Hojarascas cóctel",
+      "categoria": "chilenos",
+      "formato": "Bandeja",
+      "unidades": 60,
+      "precio": 4500,
+      "ilustracion": "hoja",
+      "destacado": true,
+      "disponible": true,
       "descripcion": "Hojarascas artesanales y neutras. Rellénalas como quieras: con manjar, mermelada o crema. También puedes bañarlas en chocolate o decorarlas con azúcar flor.",
-      "usos": ["Neutras", "Manjar, mermelada o crema", "Para bañar en chocolate", "Producto chileno"],
-      "medidas": "Ø 4 cm", "peso": "3 g", "pesoNeto": "160 g", "duracion": "180 días", "abierta": null,
-      "conservacion": "En lugar seco", "ean": null, "fotos": ["productos/cc-hoj-060-1.webp", "productos/cc-hoj-060-2.webp"],
-      "urlAntigua": null
+      "usos": [
+        "Neutras",
+        "Manjar, mermelada o crema",
+        "Para bañar en chocolate",
+        "Producto chileno"
+      ],
+      "medidas": "Ø 4 cm",
+      "peso": "3 g",
+      "pesoNeto": "160 g",
+      "duracion": "180 días",
+      "abierta": null,
+      "conservacion": "En lugar seco",
+      "ean": null,
+      "fotos": [
+        "productos/cc-hoj-060-1.webp",
+        "productos/cc-hoj-060-2.webp"
+      ],
+      "urlAntigua": null,
+      "ingredientes": null,
+      "alergenos": null
     }
   ],
   "ideas": [
-    { "titulo": "Tacitas saladas", "productos": ["CC-TAC-050", "CC-TAC-150"], "texto": "Ave pimentón, ceviche o queso crema con ciboulette.", "ilustracion": "tacita", "rellenos": ["f-herb", "f-cream", "f-berry", "f-cream"] },
-    { "titulo": "Tacitas dulces", "productos": ["CC-TAC-050", "CC-TAC-150"], "texto": "Mousse de chocolate, crema pastelera con frutillas o lemon pie. También puedes bañarlas en chocolate.", "ilustracion": "tacita", "rellenos": ["f-berry", "mj", "f-cream", "f-berry"] },
-    { "titulo": "Mini tartaletas flor", "productos": ["CC-TAR-072"], "texto": "Crema pastelera con frutas, lemon pie o crema de palta con camarón.", "ilustracion": "flor", "rellenos": ["f-berry", "f-cream", "f-herb", "f-cream"] },
-    { "titulo": "Cachitos", "productos": ["CC-CAC-090"], "texto": "Crema chantilly, manjar o mousse de maracuyá.", "ilustracion": "cachito", "rellenos": ["f-cream", "mj", "f-cream", "f-berry"] },
-    { "titulo": "Chilenitos caseros", "productos": ["CC-HOJ-060"], "texto": "Dos hojarascas, manjar al medio y merengue o azúcar flor encima.", "ilustracion": "chilenito", "rellenos": [] },
-    { "titulo": "Hojarascas bañadas", "productos": ["CC-HOJ-060"], "texto": "Rellenas con mermelada o crema y bañadas en chocolate.", "ilustracion": "hoja", "rellenos": [] }
+    {
+      "titulo": "Tacitas saladas",
+      "productos": [
+        "CC-TAC-050",
+        "CC-TAC-150"
+      ],
+      "texto": "Ave pimentón, ceviche o queso crema con ciboulette.",
+      "ilustracion": "tacita",
+      "rellenos": [
+        "f-herb",
+        "f-cream",
+        "f-berry",
+        "f-cream"
+      ]
+    },
+    {
+      "titulo": "Tacitas dulces",
+      "productos": [
+        "CC-TAC-050",
+        "CC-TAC-150",
+        "CC-TSD-030"
+      ],
+      "texto": "Mousse de chocolate, crema pastelera con frutillas o lemon pie. También puedes bañarlas en chocolate.",
+      "ilustracion": "tacita",
+      "rellenos": [
+        "f-berry",
+        "mj",
+        "f-cream",
+        "f-berry"
+      ]
+    },
+    {
+      "titulo": "Mini tartaletas flor",
+      "productos": [
+        "CC-TAR-072"
+      ],
+      "texto": "Crema pastelera con frutas, lemon pie o crema de palta con camarón.",
+      "ilustracion": "flor",
+      "rellenos": [
+        "f-berry",
+        "f-cream",
+        "f-herb",
+        "f-cream"
+      ]
+    },
+    {
+      "titulo": "Cachitos",
+      "productos": [
+        "CC-CAC-090"
+      ],
+      "texto": "Crema chantilly, manjar o mousse de maracuyá.",
+      "ilustracion": "cachito",
+      "rellenos": [
+        "f-cream",
+        "mj",
+        "f-cream",
+        "f-berry"
+      ]
+    },
+    {
+      "titulo": "Chilenitos caseros",
+      "productos": [
+        "CC-HOJ-060"
+      ],
+      "texto": "Dos hojarascas, manjar al medio y merengue o azúcar flor encima.",
+      "ilustracion": "chilenito",
+      "rellenos": []
+    },
+    {
+      "titulo": "Hojarascas bañadas",
+      "productos": [
+        "CC-HOJ-060"
+      ],
+      "texto": "Rellenas con mermelada o crema y bañadas en chocolate.",
+      "ilustracion": "hoja",
+      "rellenos": []
+    }
   ]
 }
