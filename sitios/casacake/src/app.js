@@ -132,6 +132,13 @@
     apply();
   }
 
+  /* galería de fotos de la ficha */
+  $$('.thumbs button').forEach(b => b.addEventListener('click', () => {
+    const main = b.closest('.gallery').querySelector('.art img.photo');
+    if (main) main.src = b.dataset.foto;
+    $$('.thumbs button').forEach(x => x.setAttribute('aria-current', x === b));
+  }));
+
   /* formulario empresas */
   const b2b = $('#b2b');
   if (b2b) {

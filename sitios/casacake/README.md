@@ -13,7 +13,7 @@ Todo el contenido está en dos archivos:
 
 Cada producto tiene un `codigo` único (por ejemplo `CC-TAC-050`), que también define su dirección: `/productos/cc-tac-050/`. Los campos en `null` (medidas, peso, conservación, código de barras, foto) no se muestran en el sitio publicado.
 
-Las fotos van en `img/` y se indican en el campo `foto` de cada producto (por ejemplo `"foto": "cc-tac-050.jpg"`). Mientras no haya foto, se muestra una ilustración de la bandeja.
+Las fotos van en `img/productos/` y se indican en el campo `fotos` de cada producto (por ejemplo `"fotos": ["productos/cc-tac-050-1.webp"]`); la primera es la principal. Mientras no haya fotos, se muestra una ilustración de la bandeja. El logo, el sello y los íconos están en `img/marca/`.
 
 ### Códigos propuestos
 
@@ -36,6 +36,7 @@ Requiere Node.js 18 o superior. No tiene dependencias.
 
 ```
 node build.mjs              # sitio para publicar, en dist/
+node build.mjs --zip        # además, entrega/casacake-sitio.zip para cPanel
 node build.mjs --borrador   # marca los datos pendientes y bloquea buscadores
 node build.mjs --local      # enlaces que funcionan abriendo los archivos sin servidor
 ```
@@ -44,9 +45,6 @@ La versión para publicar no se genera si falta el WhatsApp de algún vendedor. 
 
 ## Cómo se publica
 
-1. Crear un proyecto en Cloudflare Pages (o Netlify) conectado a este repositorio.
-2. Configuración de build: carpeta raíz `sitios/casacake`, comando `node build.mjs`, carpeta de salida `dist`.
-3. Agregar el dominio `www.casacake.cl` y `casacake.cl` en el proyecto.
-4. En NIC Chile (o donde estén los DNS de casacake.cl), apuntar el dominio según indique la plataforma. **Conservar los registros MX** si hay correos @casacake.cl, para no cortarlos.
-5. `_redirects` envía las direcciones del sitio anterior (por ejemplo `/en/tacita-coctel-neutra-bandeja-50-un`) a las nuevas fichas.
-6. Dar de alta el sitio en Google Search Console y enviar `sitemap.xml`.
+El hosting de casacake.cl es cPanel. `node build.mjs --zip` genera `entrega/casacake-sitio.zip` con el sitio y su `.htaccess` (HTTPS, www y redirecciones desde las direcciones del sitio anterior). Los pasos para subirlo están en [PUBLICAR-CPANEL.md](PUBLICAR-CPANEL.md).
+
+El build también genera `_redirects`, por si algún día se publica en Cloudflare Pages o Netlify (carpeta raíz `sitios/casacake`, comando `node build.mjs`, salida `dist`).

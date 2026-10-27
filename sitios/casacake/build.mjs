@@ -24,9 +24,16 @@ falta(sitio.direccion, 'Dirección (data/sitio.json → direccion)');
 falta(sitio.horario, 'Horario de atención (data/sitio.json → horario)');
 falta(sitio.rut, 'RUT de la empresa (data/sitio.json → rut)');
 for (const p of productos) {
-  for (const k of ['medidas', 'peso', 'duracion', 'conservacion', 'ean', 'foto']) falta(p[k], `${p.codigo}: ${k}`);
+  for (const k of ['medidas', 'peso', 'pesoNeto', 'duracion', 'conservacion', 'ean']) falta(p[k], `${p.codigo}: ${k}`);
+  falta(p.fotos.length, `${p.codigo}: fotos`);
+  for (const f of p.fotos) if (!fs.existsSync(path.join(ROOT, 'img', f))) { console.error(`Falta la imagen img/${f} (${p.codigo})`); process.exit(1); }
   if (sitio.mostrarPrecios) falta(p.precio, `${p.codigo}: precio`);
 }
+// líneas e ideas sin productos vigentes no se publican
+const lineas = categorias.filter(c => productos.some(p => p.categoria === c.id));
+const ideasVigentes = ideas
+  .map(i => ({ ...i, productos: i.productos.filter(c => productos.some(p => p.codigo === c)) }))
+  .filter(i => i.productos.length);
 const codigos = productos.map(p => p.codigo);
 const repetidos = codigos.filter((c, i) => codigos.indexOf(c) !== i);
 if (repetidos.length) { console.error('Códigos repetidos:', repetidos.join(', ')); process.exit(1); }
@@ -80,8 +87,9 @@ function tray(kind, opts = {}) {
   }
   return s + '</svg>';
 }
-const art = (p, from) => p.foto
-  ? `<img src="${link(from, 'img/' + p.foto)}" alt="${esc(p.nombre)}" loading="lazy">`
+const img = (from, file, alt, extra = '') => `<img src="${link(from, 'img/' + file)}" alt="${esc(alt)}" loading="lazy" decoding="async"${extra}>`;
+const art = (p, from) => p.fotos.length
+  ? img(from, p.fotos[0], p.nombre, ' class="photo"')
   : tray(p.ilustracion, { label: p.nombre });
 
 /* ---------- piezas de página ---------- */
@@ -121,8 +129,11 @@ ${BORRADOR ? '<meta name="robots" content="noindex">' : `<link rel="canonical" h
 <meta property="og:description" content="${esc(descripcion)}">
 <meta property="og:url" content="${url}">
 <meta property="og:locale" content="es_CL">
-<meta name="theme-color" content="#C3345A">
-<link rel="icon" href="${link(from, 'favicon.svg')}" type="image/svg+xml">
+${sitio.imagenCompartir ? `<meta property="og:image" content="${sitio.dominio}/img/${sitio.imagenCompartir}">` : ''}
+<meta name="theme-color" content="#B90000">
+<link rel="icon" href="${link(from, 'img/marca/favicon-32.png')}" sizes="32x32" type="image/png">
+<link rel="icon" href="${link(from, 'img/marca/favicon-64.png')}" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="${link(from, 'img/marca/apple-touch-icon.png')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600;700&display=swap">
@@ -134,7 +145,7 @@ ${ga}
 ${BORRADOR ? `<div class="draft"><div class="wrap"><b>Borrador.</b> Los datos con <span class="pend">borde punteado</span> están pendientes y no aparecerán así en el sitio publicado.</div></div>` : ''}
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="${link(from, '')}" aria-label="${esc(sitio.nombre)}, inicio">casacake<i>.</i></a>
+    <a class="brand" href="${link(from, '')}" aria-label="${esc(sitio.nombre)}, inicio">${sitio.logo ? `<img src="${link(from, 'img/' + sitio.logo)}" alt="${esc(sitio.nombre)}" width="600" height="136">` : 'casacake<i>.</i>'}</a>
     <nav class="nav" id="nav" aria-label="Principal">${nav.map(([h, t]) => `<a href="${link(from, h)}"${actual === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}</nav>
     <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
     <button class="list-btn" type="button" data-open-list aria-label="Abrir mi lista de consulta">Mi lista <span class="count" data-list-count>0</span></button>
@@ -145,15 +156,16 @@ ${cuerpo}
 </main>
 <footer>
   <div class="wrap">
-    <div><h4>${esc(sitio.razonSocial)}</h4><p>${esc(sitio.descripcion)}</p><p style="margin-top:8px">${esc(sitio.region)}</p></div>
+    <div class="foot-brand">${sitio.sello ? img(from, sitio.sello, `Sello ${sitio.nombre}`, ' width="96" height="96"') : ''}<div><h4>${esc(sitio.razonSocial)}</h4><p>${esc(sitio.descripcion)}</p><p style="margin-top:8px">${esc(sitio.region)}</p></div></div>
     <div><h4>Contacto</h4><ul>
       ${vendedorWa ? `<li><a href="${waLink(vendedorWa.whatsapp, `Hola ${sitio.nombre}, quiero hacer una consulta.`)}" target="_blank" rel="noopener">WhatsApp +${vendedorWa.whatsapp}</a></li>` : `<li>WhatsApp ${PEND()}</li>`}
       ${sitio.correo ? `<li><a href="mailto:${sitio.correo}">${sitio.correo}</a></li>` : `<li>Correo ${PEND()}</li>`}
       ${sitio.direccion ? `<li>${esc(sitio.direccion)}</li>` : `<li>Dirección ${PEND()}</li>`}
     </ul></div>
     <div><h4>Catálogo</h4><ul>
-      ${categorias.map(c => `<li><a href="${link(from, `productos/?cat=${c.id}`)}">${esc(c.nombre)}</a></li>`).join('')}
+      ${lineas.map(c => `<li><a href="${link(from, `productos/?cat=${c.id}`)}">${esc(c.nombre)}</a></li>`).join('')}
       <li><a href="${link(from, 'empresas/')}">Ventas a empresas</a></li>
+      <li><a href="${link(from, 'contacto/#donde-comprar')}">Dónde comprar</a></li>
     </ul></div>
     <p class="legal">© ${new Date().getFullYear()} ${esc(sitio.razonSocial)}${sitio.rut ? ' · RUT ' + esc(sitio.rut) : (BORRADOR ? ' · RUT ' + PEND() : '')}${sitio.redes.facebook ? ` · <a href="${sitio.redes.facebook}" target="_blank" rel="noopener">Facebook</a>` : ''}${sitio.redes.instagram ? ` · <a href="${sitio.redes.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}</p>
   </div>
@@ -191,13 +203,18 @@ const add = (ruta, opts) => pages.push({ ruta, html: layout({ ruta, ...opts }) }
     <p class="eyebrow">Bases horneadas · ${esc(sitio.region.split(',')[0])}</p>
     <h1>Listas para <span>rellenar.</span></h1>
     <p class="lede">Tacitas, tartaletas, cachitos y hojarasca horneadas y crujientes. Elige en el catálogo, anota el código y escríbele directo a tu vendedor.</p>
-    <div class="ctas"><a class="btn btn-berry" href="${link(from, 'productos/')}">Ver catálogo</a><a class="btn btn-ghost" href="${link(from, 'empresas/')}">Ventas a empresas</a></div>
+    <div class="ctas"><a class="btn btn-brand" href="${link(from, 'productos/')}">Ver catálogo</a><a class="btn btn-ghost" href="${link(from, 'empresas/')}">Ventas a empresas</a></div>
   </div>
-  <div class="hero-art" aria-hidden="true">${tray('tacita', { cols: 6, rows: 4, r: 15, fills: [null, 'f-berry', null, 'f-herb', null, null, 'f-cream', null, 'f-berry', null, null, 'f-herb', null, null, 'f-cream', null, 'f-berry', null, 'f-herb', null, null, 'f-cream', null, null] })}</div>
+  <div class="hero-art">${(() => {
+    const conFoto = productos.filter((p, i, all) => p.fotos.length && all.findIndex(x => x.fotos[0] === p.fotos[0]) === i).slice(0, 2);
+    if (!conFoto.length) return tray('tacita', { cols: 6, rows: 4, r: 15 });
+    return `<div class="hero-photos">${conFoto.map(p => `<a href="${link(from, `productos/${slug(p)}/`)}">${img(from, p.fotos[0], p.nombre)}</a>`).join('')}${sitio.sello ? img(from, sitio.sello, `Sello ${sitio.nombre}`, ' class="hero-seal"') : ''}</div>`;
+  })()}</div>
 </div></section>
+${sitio.dondeComprar.length ? `<div class="stores"><div class="wrap"><span>También en</span>${sitio.dondeComprar.map(d => `<a href="${d.url}" target="_blank" rel="noopener">${esc(d.nombre)}</a>`).join('')}</div></div>` : ''}
 <section style="padding-top:24px"><div class="wrap">
   <div class="sec-head"><div><p class="eyebrow">Catálogo</p><h2>Líneas de producto</h2></div></div>
-  <div class="cats">${categorias.map(c => { const ps = productos.filter(p => p.categoria === c.id); return `<a class="cat" href="${link(from, `productos/?cat=${c.id}`)}">${art(ps[0], from)}<div><h3>${esc(c.nombre)}</h3><p>${esc(c.descripcion)}</p><span class="n">${ps.length} productos</span></div></a>`; }).join('')}</div>
+  <div class="cats">${lineas.map(c => { const ps = productos.filter(p => p.categoria === c.id); return `<a class="cat" href="${link(from, `productos/?cat=${c.id}`)}">${art(ps[0], from)}<div><h3>${esc(c.nombre)}</h3><p>${esc(c.descripcion)}</p><span class="n">${ps.length} ${ps.length === 1 ? 'producto' : 'productos'}</span></div></a>`; }).join('')}</div>
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <div class="sec-head"><div><p class="eyebrow">Destacados</p><h2>Los más pedidos</h2></div><a class="btn btn-ghost" href="${link(from, 'productos/')}">Ver todo el catálogo</a></div>
@@ -213,7 +230,7 @@ const add = (ruta, opts) => pages.push({ ruta, html: layout({ ruta, ...opts }) }
 </div></section>
 <div class="band"><div class="wrap">
   <div><p class="eyebrow">Empresas y mayoristas</p><h2>¿Compras por volumen?</h2><p>Banqueteras, pastelerías, hoteles, cafeterías y distribuidores: pide una propuesta con precios por volumen.</p></div>
-  <a class="btn btn-berry" href="${link(from, 'empresas/')}">Pedir propuesta</a>
+  <a class="btn btn-brand" href="${link(from, 'empresas/')}">Pedir propuesta</a>
 </div></div>`
   });
 }
@@ -223,14 +240,14 @@ const add = (ruta, opts) => pages.push({ ruta, html: layout({ ruta, ...opts }) }
   const from = 'productos/';
   add(from, {
     titulo: `Productos · ${sitio.nombre}`, actual: from,
-    descripcion: `Catálogo de ${sitio.nombre}: ${categorias.map(c => c.nombre.toLowerCase()).join(', ')}. Cada producto con su código para consultar directo al vendedor.`,
+    descripcion: `Catálogo de ${sitio.nombre}: ${lineas.map(c => c.nombre.toLowerCase()).join(', ')}. Cada producto con su código para consultar directo al vendedor.`,
     cuerpo: `
 <section style="padding-top:40px"><div class="wrap">
   <div class="sec-head"><div><p class="eyebrow">Catálogo</p><h1 style="font-size:clamp(2rem,4.6vw,3rem)">Productos</h1></div><p>Busca por nombre o código. Agrega a tu lista y envíala al vendedor en un solo mensaje.</p></div>
   <div class="tools">
     <div class="chips" role="group" aria-label="Filtrar por línea">
       <a class="chip" href="${link(from, 'productos/')}" data-cat="todo" aria-pressed="true">Todo</a>
-      ${categorias.map(c => `<a class="chip" href="${link(from, `productos/?cat=${c.id}`)}" data-cat="${c.id}" aria-pressed="false">${esc(c.nombre)}</a>`).join('')}
+      ${lineas.map(c => `<a class="chip" href="${link(from, `productos/?cat=${c.id}`)}" data-cat="${c.id}" aria-pressed="false">${esc(c.nombre)}</a>`).join('')}
     </div>
     <div class="search"><label for="q" class="code" style="position:absolute;left:-9999px">Buscar</label><input id="q" type="search" placeholder="Buscar por nombre o código" autocomplete="off"></div>
   </div>
@@ -248,18 +265,21 @@ for (const p of productos) {
   const msg = `Hola ${sitio.nombre}, quiero consultar por el producto ${p.codigo} ${p.nombre} (${p.formato.toLowerCase()}, ${p.unidades} unidades).`;
   const vendedores = sitio.vendedores.filter(v => v.whatsapp);
   const relacionados = productos.filter(x => x.categoria === p.categoria && x.codigo !== p.codigo).slice(0, 4);
-  const ideasP = ideas.filter(i => i.productos.includes(p.codigo));
+  const ideasP = ideasVigentes.filter(i => i.productos.includes(p.codigo));
   add(from, {
     titulo: `${p.nombre} (${p.codigo}) · ${sitio.nombre}`, actual: 'productos/',
     descripcion: `${p.descripcion} ${p.formato} de ${p.unidades} unidades. Código ${p.codigo}.`,
     jsonld: { '@context': 'https://schema.org', '@type': 'Product', name: p.nombre, sku: p.codigo, description: p.descripcion, brand: { '@type': 'Brand', name: sitio.nombre }, category: cat.nombre,
-      ...(p.ean && { gtin13: p.ean }), ...(p.foto && { image: `${sitio.dominio}/img/${p.foto}` }),
+      ...(p.ean && { gtin13: p.ean }), ...(p.fotos.length && { image: p.fotos.map(f => `${sitio.dominio}/img/${f}`) }),
       ...(sitio.mostrarPrecios && p.precio && { offers: { '@type': 'Offer', price: p.precio, priceCurrency: 'CLP', availability: `https://schema.org/${p.disponible ? 'InStock' : 'OutOfStock'}` } }) },
     cuerpo: `
 <div class="wrap">
   <nav class="crumbs" aria-label="Ruta"><a href="${link(from, '')}">Inicio</a><span>/</span><a href="${link(from, 'productos/')}">Productos</a><span>/</span><a href="${link(from, `productos/?cat=${cat.id}`)}">${esc(cat.nombre)}</a></nav>
   <div class="ficha">
-    <div class="art">${art(p, from)}${p.disponible ? '' : '<span class="badge">Agotado</span>'}</div>
+    <div class="gallery">
+      <div class="art">${art(p, from)}${p.disponible ? '' : '<span class="badge">Agotado</span>'}</div>
+      ${p.fotos.length > 1 ? `<div class="thumbs">${p.fotos.map((f, i) => `<button type="button" data-foto="${link(from, 'img/' + f)}" aria-label="Ver foto ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}>${img(from, f, '')}</button>`).join('')}</div>` : ''}
+    </div>
     <div class="info">
       <div class="code-row"><span class="code-big">${p.codigo}</span><button class="copy" type="button" data-copy-text="${p.codigo}">Copiar código</button></div>
       <h1>${esc(p.nombre)}</h1>
@@ -267,7 +287,7 @@ for (const p of productos) {
       ${p.usos.length ? `<div class="tags">${p.usos.map(u => `<span>${esc(u)}</span>`).join('')}</div>` : ''}
       <dl class="specs">
         ${row('Código', p.codigo, true)}${row('Línea', cat.nombre, true)}${row('Formato', p.formato, true)}${row('Unidades', String(p.unidades), true)}
-        ${row('Medidas', p.medidas)}${row('Peso', p.peso)}${row('Duración', p.duracion)}${row('Conservación', p.conservacion)}${row('Código de barras', p.ean)}
+        ${row('Medidas', p.medidas)}${row('Peso por unidad', p.peso)}${row('Peso neto', p.pesoNeto)}${row('Duración (envase cerrado)', p.duracion)}${p.abierta ? row('Una vez abierta', p.abierta) : ''}${row('Conservación', p.conservacion)}${row('Código de barras', p.ean)}
         ${sitio.mostrarPrecios ? row('Precio', p.precio && money(p.precio)) : ''}
       </dl>
       <div class="ask">
@@ -298,7 +318,7 @@ for (const p of productos) {
     cuerpo: `
 <section style="padding-top:40px"><div class="wrap">
   <div class="sec-head"><div><p class="eyebrow">Ideas para rellenar</p><h1 style="font-size:clamp(2rem,4.6vw,3rem)">Una base, muchos cócteles</h1></div><p>Rellenos dulces y salados para cada producto, con el código para pedirlo.</p></div>
-  <div class="ideas">${ideas.map(i => `<div class="idea">${tray(i.ilustracion, { cols: 2, rows: 2, r: 30, fills: i.rellenos })}<h3>${esc(i.titulo)}</h3><p>${esc(i.texto)}</p><div class="links">${i.productos.map(c => `<a href="${link(from, `productos/${c.toLowerCase()}/`)}">${c}</a>`).join('')}</div></div>`).join('')}</div>
+  <div class="ideas">${ideasVigentes.map(i => `<div class="idea">${tray(i.ilustracion, { cols: 2, rows: 2, r: 30, fills: i.rellenos })}<h3>${esc(i.titulo)}</h3><p>${esc(i.texto)}</p><div class="links">${i.productos.map(c => `<a href="${link(from, `productos/${c.toLowerCase()}/`)}">${c}</a>`).join('')}</div></div>`).join('')}</div>
 </div></section>`
   });
 }
@@ -370,7 +390,7 @@ pages.push({ ruta: '404.html', html: layout({ ruta: '', titulo: `Página no enco
 <section><div class="wrap" style="display:grid;gap:16px;justify-items:start">
   <p class="eyebrow">Error 404</p><h1>No encontramos esta página</h1>
   <p class="muted">Puede que el producto haya cambiado de dirección. Búscalo por nombre o código en el catálogo.</p>
-  <a class="btn btn-berry" href="/productos/">Ir al catálogo</a>
+  <a class="btn btn-brand" href="/productos/">Ir al catálogo</a>
 </div></section>` }).replace(/(href|src)="\.\/(?!\/)/g, '$1="/') });
 
 /* ---------- escritura ---------- */
@@ -383,22 +403,71 @@ for (const p of pages) {
 fs.copyFileSync(path.join(ROOT, 'src/estilos.css'), path.join(OUT, 'estilos.css'));
 fs.copyFileSync(path.join(ROOT, 'src/app.js'), path.join(OUT, 'app.js'));
 if (fs.existsSync(path.join(ROOT, 'img'))) fs.cpSync(path.join(ROOT, 'img'), path.join(OUT, 'img'), { recursive: true });
-fs.writeFileSync(path.join(OUT, 'favicon.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#2C1714"/><circle cx="32" cy="32" r="17" fill="#E2A851"/><circle cx="32" cy="32" r="9" fill="#C3345A"/></svg>');
+fs.copyFileSync(path.join(ROOT, 'img/marca/favicon-32.png'), path.join(OUT, 'favicon.ico'));
 
 const urls = pages.filter(p => !p.ruta.endsWith('.html')).map(p => `${sitio.dominio}/${p.ruta}`);
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 fs.writeFileSync(path.join(OUT, 'robots.txt'), BORRADOR ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${sitio.dominio}/sitemap.xml\n`);
 
-// redirecciones desde las direcciones del sitio anterior (formato Netlify / Cloudflare Pages)
-const redirects = [
-  ...productos.filter(p => p.urlAntigua).map(p => `${p.urlAntigua} /productos/${slug(p)}/ 301`),
-  '/dolccezza /productos/?cat=dulces 301',
-  '/lidercl /contacto/#donde-comprar 301',
-  '/en / 301',
-  '/en/ / 301',
-  '/en/* /productos/ 301'
+// redirecciones desde las direcciones del sitio anterior
+const antiguas = [
+  ...productos.filter(p => p.urlAntigua).map(p => [p.urlAntigua, `/productos/${slug(p)}/`]),
+  ...(sitio.redireccionesExtra || []),
+  ['/pack-3-bandeja-mini-chilenito-12-un', '/productos/'],
+  ['/en/bandeja-galletitas-para-mini-alfajores', '/productos/'],
+  ['/dolccezza', '/productos/'],
+  ['/lidercl', '/contacto/#donde-comprar']
 ];
-fs.writeFileSync(path.join(OUT, '_redirects'), redirects.join('\n') + '\n');
+// Netlify / Cloudflare Pages
+fs.writeFileSync(path.join(OUT, '_redirects'), [...antiguas.map(([a, b]) => `${a} ${b} 301`), '/en / 301', '/en/* /productos/ 301'].join('\n') + '\n');
+// Apache (hosting con cPanel)
+const host = new URL(sitio.dominio).host;
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/^\//, '');
+fs.writeFileSync(path.join(OUT, '.htaccess'), `# Generado por build.mjs: no editar a mano
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+AddDefaultCharset UTF-8
+AddType image/webp .webp
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# HTTPS y ${host}, salvo en la validación de certificados de cPanel
+RewriteCond %{REQUEST_URI} !^/\\.well-known/
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^${host.replace(/\./g, '\\.')}$ [NC]
+RewriteRule ^(.*)$ https://${host}/$1 [R=301,L]
+
+# Direcciones del sitio anterior
+${antiguas.map(([a, b]) => `RewriteRule ^${reEsc(a)}/?$ ${b.replace('#', '\\#')} [R=301,L,NE]`).join('\n')}
+RewriteRule ^en/?$ / [R=301,L]
+RewriteRule ^en/.+ /productos/ [R=301,L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/xml text/plain
+</IfModule>
+
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType text/html "access plus 0 seconds"
+ExpiresByType text/css "access plus 1 week"
+ExpiresByType application/javascript "access plus 1 week"
+ExpiresByType image/webp "access plus 1 month"
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/jpeg "access plus 1 month"
+</IfModule>
+`);
+
+// paquete para subir por el administrador de archivos de cPanel
+if (process.argv.includes('--zip')) {
+  const { execFileSync } = await import('node:child_process');
+  const zip = path.join(ROOT, 'entrega', 'casacake-sitio.zip');
+  fs.mkdirSync(path.dirname(zip), { recursive: true });
+  fs.rmSync(zip, { force: true });
+  execFileSync('zip', ['-r', '-q', '-X', zip, '.', '-x', '_redirects'], { cwd: OUT });
+  console.log('Paquete para cPanel:', path.relative(ROOT, zip));
+}
 
 console.log(`Sitio generado en dist/ (${pages.length} páginas${BORRADOR ? ', modo borrador' : ''}${LOCAL ? ', enlaces locales' : ''}).`);
 if (pendientes.length) {

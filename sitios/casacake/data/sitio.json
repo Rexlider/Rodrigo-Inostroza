@@ -1,25 +1,29 @@
 {
   "nombre": "Casacake",
   "razonSocial": "Casacake SpA",
-  "rut": null,
+  "rut": "76.653.098-2",
   "dominio": "https://www.casacake.cl",
   "lema": "Listas para rellenar.",
-  "descripcion": "Bases horneadas listas para rellenar: tacitas, tartaletas, cachitos y hojarasca para cócteles, repostería y eventos.",
-  "region": "Región de O'Higgins, Chile",
-  "correo": null,
+  "descripcion": "Bases horneadas listas para rellenar: tacitas, tartaletas, cachitos y hojarascas para cócteles, repostería y eventos.",
+  "region": "Rancagua, Región de O'Higgins, Chile",
+  "correo": "ventas@casacake.cl",
   "telefono": null,
-  "direccion": null,
+  "direccion": "Piren 01164, Rancagua",
   "horario": null,
   "mostrarPrecios": false,
+  "logo": "marca/logo-casacake.webp",
+  "sello": "marca/sello-casacake.webp",
+  "imagenCompartir": "marca/og-casacake.jpg",
   "vendedores": [
-    { "nombre": null, "zona": "Ventas", "whatsapp": null }
+    { "nombre": "Rodrigo Inostroza González", "zona": "Ventas", "whatsapp": "56940211074" }
   ],
   "redes": {
-    "instagram": null,
+    "instagram": "https://www.instagram.com/casacake.cl/",
     "facebook": "https://www.facebook.com/Casacake/"
   },
   "dondeComprar": [
-    { "nombre": "Supermercados Lider", "url": "https://www.lider.cl/supermercado/product/sku/4542248/casacake-tacitas-de-coctel" }
+    { "nombre": "Supermercados Lider", "url": "https://www.lider.cl/supermercado/product/sku/4542248/casacake-tacitas-de-coctel" },
+    { "nombre": "Mercado Libre", "url": "https://www.mercadolibre.cl/pack-tacitas-coctel-casacake-neutras-3-band/up/MLCU2887173822" }
   ],
   "googleAnalytics": null
 }
