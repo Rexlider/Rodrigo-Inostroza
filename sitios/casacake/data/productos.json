@@ -91,8 +91,8 @@
       ],
       "medidas": null,
       "peso": null,
-      "pesoNeto": "200 g",
-      "duracion": null,
+      "pesoNeto": "140 g",
+      "duracion": "180 días",
       "abierta": null,
       "conservacion": null,
       "ean": null,
@@ -105,11 +105,11 @@
       "urlAntigua": null
     },
     {
-      "codigo": "CC-TAR-072",
-      "nombre": "Mini tartaletas flor cóctel · Pack 3",
+      "codigo": "CC-TAR-030",
+      "nombre": "Mini tartaletas flor cóctel",
       "categoria": "coctel",
-      "formato": "Pack de 3 bandejas de 24",
-      "unidades": 72,
+      "formato": "Bandeja",
+      "unidades": 30,
       "precio": 14900,
       "ilustracion": "flor",
       "destacado": true,
@@ -120,13 +120,13 @@
       ],
       "medidas": null,
       "peso": null,
-      "pesoNeto": null,
-      "duracion": null,
+      "pesoNeto": "120 g",
+      "duracion": "180 días",
       "abierta": null,
       "conservacion": null,
       "ean": null,
       "fotos": [
-        "productos/cc-tar-072-1.webp"
+        "productos/cc-tar-030-1.webp"
       ],
       "urlAntigua": null,
       "ingredientes": null,
@@ -230,7 +230,7 @@
     {
       "titulo": "Mini tartaletas flor",
       "productos": [
-        "CC-TAR-072"
+        "CC-TAR-030"
       ],
       "texto": "Crema pastelera con frutas, lemon pie o crema de palta con camarón.",
       "ilustracion": "flor",
