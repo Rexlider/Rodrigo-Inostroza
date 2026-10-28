@@ -51,6 +51,7 @@ const PEND = (t = 'Por completar') => BORRADOR ? `<span class="pend">${esc(t)}</
 const waLink = (num, text) => `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
 const catById = id => categorias.find(c => c.id === id);
 const prodByCode = c => productos.find(p => p.codigo === c);
+const ml = sitio.dondeComprar.find(d => /mercado ?libre/i.test(d.nombre));
 
 // enlaces relativos para que el sitio funcione en cualquier carpeta o servidor
 function link(from, to) {
@@ -302,6 +303,7 @@ for (const p of productos) {
           <div class="stepper"><button type="button" data-step="-1" aria-label="Menos">−</button><input type="number" id="qty-${p.codigo}" value="1" min="1" inputmode="numeric" aria-label="Cantidad"><button type="button" data-step="1" aria-label="Más">+</button></div>
           <button class="btn btn-ghost" type="button" data-add="${p.codigo}">Agregar a mi lista</button>
         </div>
+        ${p.sueltaEnMercadoLibre && ml ? `<p class="ml-note">¿Necesitas una sola bandeja? La venta por bandeja suelta es solo en <a href="${ml.url}" target="_blank" rel="noopener">Mercado Libre</a>.</p>` : ''}
       </div>
     </div>
   </div>

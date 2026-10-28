@@ -41,7 +41,8 @@
       ],
       "urlAntigua": "/en/tacita-coctel-neutra-bandeja-50-un",
       "ingredientes": null,
-      "alergenos": null
+      "alergenos": null,
+      "sueltaEnMercadoLibre": false
     },
     {
       "codigo": "CC-TAC-150",
@@ -72,7 +73,8 @@
       ],
       "urlAntigua": "/en/pack-3-bandeja-tacita-coctel-neutra-50-un",
       "ingredientes": null,
-      "alergenos": null
+      "alergenos": null,
+      "sueltaEnMercadoLibre": false
     },
     {
       "codigo": "CC-TSD-030",
@@ -102,14 +104,15 @@
       ],
       "ingredientes": "Harina de trigo, agua, margarina de horneo de origen animal (vacuno y cerdo), fécula de maíz, vainilla, lecitina de soya, sal, vinagre, leche en polvo descremada y propionato de calcio.",
       "alergenos": "Gluten de trigo, soya y leche.",
-      "urlAntigua": null
+      "urlAntigua": null,
+      "sueltaEnMercadoLibre": false
     },
     {
-      "codigo": "CC-TAR-030",
-      "nombre": "Mini tartaletas flor cóctel",
+      "codigo": "CC-TAR-090",
+      "nombre": "Mini tartaletas flor cóctel · Pack 3",
       "categoria": "coctel",
-      "formato": "Bandeja",
-      "unidades": 30,
+      "formato": "Pack de 3 bandejas de 30",
+      "unidades": 90,
       "precio": 14900,
       "ilustracion": "flor",
       "destacado": true,
@@ -120,17 +123,18 @@
       ],
       "medidas": null,
       "peso": "≈ 6,7 g",
-      "pesoNeto": "200 g",
+      "pesoNeto": "3 × 200 g",
       "duracion": "180 días",
       "abierta": null,
       "conservacion": null,
       "ean": null,
       "fotos": [
-        "productos/cc-tar-030-1.webp"
+        "productos/cc-tar-090-1.webp"
       ],
       "urlAntigua": null,
       "ingredientes": null,
-      "alergenos": null
+      "alergenos": null,
+      "sueltaEnMercadoLibre": true
     },
     {
       "codigo": "CC-CAC-090",
@@ -160,7 +164,8 @@
       ],
       "urlAntigua": null,
       "ingredientes": null,
-      "alergenos": null
+      "alergenos": null,
+      "sueltaEnMercadoLibre": true
     },
     {
       "codigo": "CC-HOJ-060",
@@ -192,7 +197,8 @@
       ],
       "urlAntigua": null,
       "ingredientes": null,
-      "alergenos": null
+      "alergenos": null,
+      "sueltaEnMercadoLibre": false
     }
   ],
   "ideas": [
@@ -230,7 +236,7 @@
     {
       "titulo": "Mini tartaletas flor",
       "productos": [
-        "CC-TAR-030"
+        "CC-TAR-090"
       ],
       "texto": "Crema pastelera con frutas, lemon pie o crema de palta con camarón.",
       "ilustracion": "flor",
