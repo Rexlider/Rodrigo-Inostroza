@@ -9,21 +9,31 @@
   "correo": "ventas@casacake.cl",
   "telefono": null,
   "direccion": "Piren 01164, Rancagua",
-  "horario": null,
+  "horario": "Lunes a viernes, de 9:00 a 14:00",
   "mostrarPrecios": false,
   "logo": "marca/logo-casacake.webp",
   "sello": "marca/sello-casacake.webp",
   "imagenCompartir": "marca/og-casacake.jpg",
   "vendedores": [
-    { "nombre": "Rodrigo Inostroza González", "zona": "Ventas", "whatsapp": "56940211074" }
+    {
+      "nombre": "Rodrigo Inostroza González",
+      "zona": "Ventas",
+      "whatsapp": "56940211074"
+    }
   ],
   "redes": {
     "instagram": "https://www.instagram.com/casacake.cl/",
     "facebook": "https://www.facebook.com/Casacake/"
   },
   "dondeComprar": [
-    { "nombre": "Supermercados Lider", "url": "https://www.lider.cl/supermercado/product/sku/4542248/casacake-tacitas-de-coctel" },
-    { "nombre": "Mercado Libre", "url": "https://www.mercadolibre.cl/pack-tacitas-coctel-casacake-neutras-3-band/up/MLCU2887173822" }
+    {
+      "nombre": "Supermercados Lider",
+      "url": "https://www.lider.cl/supermercado/product/sku/4542248/casacake-tacitas-de-coctel"
+    },
+    {
+      "nombre": "Mercado Libre",
+      "url": "https://www.mercadolibre.cl/pack-tacitas-coctel-casacake-neutras-3-band/up/MLCU2887173822"
+    }
   ],
   "googleAnalytics": null
 }

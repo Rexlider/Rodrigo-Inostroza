@@ -88,10 +88,10 @@ section{padding-block:64px}
 .hero .lede{max-width:44ch;color:var(--muted);font-size:1.15rem;margin-top:20px}
 .hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
 .hero-photos{position:relative;aspect-ratio:1/1;width:100%;max-width:500px;margin-inline:auto;border-radius:50%;background:var(--yellow)}
-.hero-photos a{position:absolute;width:62%;background:#fff;border-radius:18px;padding:8px;box-shadow:0 16px 30px rgb(60 20 0 / .16)}
+.hero-photos a{position:absolute;width:66%}
 .hero-photos a:nth-of-type(1){left:0;top:16%;transform:rotate(-4deg)}
 .hero-photos a:nth-of-type(2){right:0;bottom:8%;transform:rotate(3deg)}
-.hero-photos a img{width:100%;aspect-ratio:4/3;object-fit:contain;display:block;border-radius:12px}
+.hero-photos a img{width:100%;aspect-ratio:4/3;object-fit:contain;display:block;filter:drop-shadow(0 14px 18px rgb(60 20 0 / .22))}
 .hero-seal{position:absolute;right:2%;top:0;width:30%;height:auto;filter:drop-shadow(0 8px 14px rgb(60 20 0 / .2))}
 .stores{border-block:1px solid var(--line);background:var(--surface)}
 .stores .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-block:14px;font-size:.92rem;color:var(--muted)}
@@ -135,7 +135,7 @@ section{padding-block:64px}
 .card:hover{border-color:var(--ink)}
 .card .art{background:var(--bg);padding:10px 10px 2px;aspect-ratio:240/170}
 .card .art svg,.card .art img{width:100%;height:100%;display:block;object-fit:cover;border-radius:10px}
-.card .art:has(img.photo),.ficha .art:has(img.photo){background:#fff}
+.ficha .art:has(img.photo){background:var(--brand-soft)}
 .card .art{position:relative}
 .card .art img.photo{position:absolute;inset:10px 10px 2px;width:calc(100% - 20px);height:calc(100% - 12px);object-fit:contain}
 .card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
@@ -153,7 +153,7 @@ section{padding-block:64px}
 .ficha .art svg,.ficha .art img{width:100%;height:auto;display:block;border-radius:12px}
 .ficha .art img.photo{aspect-ratio:4/3;object-fit:contain}
 .thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.thumbs button{width:84px;border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:4px;cursor:pointer}
+.thumbs button{width:84px;border:1.5px solid var(--line);border-radius:10px;background:var(--brand-soft);padding:4px;cursor:pointer}
 .thumbs button[aria-current="true"]{border-color:var(--ink)}
 .thumbs img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block}
 .ficha .info{display:grid;gap:18px;min-width:0}

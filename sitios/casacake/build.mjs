@@ -161,6 +161,7 @@ ${cuerpo}
       ${vendedorWa ? `<li><a href="${waLink(vendedorWa.whatsapp, `Hola ${sitio.nombre}, quiero hacer una consulta.`)}" target="_blank" rel="noopener">WhatsApp +${vendedorWa.whatsapp}</a></li>` : `<li>WhatsApp ${PEND()}</li>`}
       ${sitio.correo ? `<li><a href="mailto:${sitio.correo}">${sitio.correo}</a></li>` : `<li>Correo ${PEND()}</li>`}
       ${sitio.direccion ? `<li>${esc(sitio.direccion)}</li>` : `<li>Dirección ${PEND()}</li>`}
+      ${sitio.horario ? `<li>${esc(sitio.horario)}</li>` : ''}
     </ul></div>
     <div><h4>Catálogo</h4><ul>
       ${lineas.map(c => `<li><a href="${link(from, `productos/?cat=${c.id}`)}">${esc(c.nombre)}</a></li>`).join('')}
